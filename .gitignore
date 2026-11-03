@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------
+#  O que NAO vai pro repositorio.
+#  Arte de capa pertence as publicadoras: uso pessoal, nunca commit.
+# ---------------------------------------------------------------
+
+# chave da SteamGridDB
+sgdb_key.txt
+
+# a lista de tudo que voce possui na Steam
+userdata.json
+userdata.txt
+
+# seu mapa real: traz o seu steamID3 e os nomes das suas Colecoes.
+# o que vai pro repo e config.exemplo.json.
+config.json
+config.json.bak
+config.json.tmp
+
+# arte de jogo (sua biblioteca, nao e nossa pra distribuir)
+capas/*
+!capas/.gitkeep
+originais/
+preview/
+estado.json
+
+# a logo da Steam e marca registrada da Valve: fica so na sua maquina
+molduras/logo.png
+molduras/icone_ribbon.png
+
+# os icones de badge vieram de fora e a licenca de cada um e desconhecida.
+# ficam na sua maquina; quem clonar o repo escolhe os proprios.
+badges/*
+!badges/.gitkeep
+
+# build
+build_tmp/
+dist/
+*.exe
+*.spec
+__pycache__/
+*.py[cod]
+
+# editores e SO
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

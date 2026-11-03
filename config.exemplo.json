@@ -1,0 +1,97 @@
+{
+  "moldura": true,
+  "hierarquia": [
+    "platinado",
+    "zerado",
+    "suficiente",
+    "abandonado",
+    "pausado",
+    "online",
+    "family",
+    "free",
+    "demo"
+  ],
+  "colecoes": {
+    "07-platinado": "platinado",
+    "03-zerados": "zerado",
+    "04-Zerados (Family)": [
+      "zerado",
+      "family"
+    ],
+    "02-Sem fim mas Jogados": "suficiente",
+    "05-Joguei e Nao gostei": "abandonado",
+    "0-Parado/esperando": "pausado",
+    "10-Online Multiplayer": "online",
+    "FAMILY": "family",
+    "10-Free": "free",
+    "Demos and Playtests": "demo"
+  },
+  "_fora_do_mapa": [
+    "Colecao que nao esta no mapa acima e ignorada de proposito:",
+    "backlog, anos, generos, listas de quem jogou junto.",
+    "Colecoes dinamicas (por filtro) nao servem: nao ficam em disco."
+  ],
+  "padrao": {
+    "scale": 0.22,
+    "margin": 0.05,
+    "pos": "br",
+    "opacity": 1.0
+  },
+  "listas": {
+    "shovelware": {
+      "opacity": 0.85
+    }
+  },
+  "camadas": {
+    "_comentario": "tipo: caixa (troca a moldura), canto (triangulo) ou badge (padrao)",
+    "platinado": {
+      "tipo": "caixa",
+      "caixa_ouro": true,
+      "suprime_badge": true
+    },
+    "family": {
+      "tipo": "canto",
+      "canto": "tl",
+      "cor": [
+        46,
+        125,
+        50
+      ]
+    },
+    "free": {
+      "tipo": "adesivo",
+      "formato": "rosacea",
+      "texto": "FREE",
+      "cor": [
+        31,
+        122,
+        77
+      ],
+      "fita": [
+        21,
+        92,
+        57
+      ],
+      "pos": "tr"
+    },
+    "demo": {
+      "tipo": "adesivo",
+      "formato": "rosacea",
+      "texto": "DEMO",
+      "cor": [
+        123,
+        86,
+        196
+      ],
+      "fita": [
+        91,
+        59,
+        143
+      ],
+      "pos": "tr"
+    }
+  },
+  "family_auto": true,
+  "_family": "O status 'family' e detectado sozinho: nao precisa de colecao. Salve store.steampowered.com/dynamicstore/userdata/ como userdata.json nesta pasta. Veja --listar-family. family_auto: false desliga.",
+  "_vocabulario": "Fechado, e a ordem nao e editavel. Status (um por jogo, nesta ordem de precedencia): platinado, zerado, suficiente, abandonado, pausado, online. Modificador: family, booleano, soma a qualquer um. Adesivo (um): free vence demo. Use a tela (Vitrine.bat) em vez de editar isto a mao."
+}

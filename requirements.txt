@@ -1,0 +1,5 @@
+# A unica dependencia de execucao.
+Pillow>=9.0
+
+# Para gerar o executavel (build_exe.bat instala sozinho):
+#   pyinstaller

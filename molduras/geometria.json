@@ -1,0 +1,18 @@
+{
+  "tamanho": [
+    600,
+    900
+  ],
+  "janela": [
+    13,
+    90,
+    587,
+    882
+  ],
+  "header": 90,
+  "canto_lado": 164,
+  "canto_icone": 60,
+  "badge_lado": 104,
+  "badge_margem": 22,
+  "ajuste_2_3": false
+}
