@@ -10,17 +10,12 @@ roda a ferramenta.
 
 ```
 Coleção do Steam  ->  status  ->  camada na capa
-07-platinado          platinado   case dourada + fita "100%"
-03-zerados            zerado      badge no canto inferior direito
-10-Free               free        adesivo roseta verde "FREE"
+platinado          platinado   case dourada + fita "100%"
+zerados            zerado      badge no canto inferior direito
+Free               free        adesivo roseta verde "FREE"
 
 detectado sozinho  ->  family   ->  canto verde no alto à esquerda
 ```
-
-> **Primeira vez aqui?** Comece pelo
-> **[COMECE_AQUI.md](COMECE_AQUI.md)** — leva da pasta vazia até a
-> biblioteca emoldurada, sem desvios. Este README é a referência
-> completa, para depois.
 
 ## Por onde começar
 
@@ -96,11 +91,6 @@ Para usar outros, ponha os seus em `badges/` com os nomes acima: essa
 pasta **sempre vence** a padrão, arquivo por arquivo. Dá para trocar só
 um ícone e deixar os outros seis como estão.
 
-Os que eu uso são do [Magnific](https://www.flaticon.com/authors/magnific),
-no Flaticon, cuja licença exige atribuição e não permite redistribuir os
-arquivos — por isso eles não estão aqui, e por isso o conjunto padrão
-existe.
-
 Para regerar a padrão depois de mexer nas cores ou no estilo:
 
 ```
@@ -123,18 +113,6 @@ Rode de novo sempre que mexer nas cores ou nas medidas dentro desses
 scripts. `tools/build_stickers.py` lê os adesivos declarados no
 `config.json`, então mudar a cor de `FREE` lá e rodar o script é o
 caminho.
-
-### O ícone
-
-O ícone é `assets/icone/vitrine.png` e `.ico`. Para trocar por outro:
-
-```
-python tools/build_icone.py minha_arte.png
-```
-
-A imagem sai quadrada, sem o fundo das bordas, nos sete tamanhos que o
-Windows pede. Sem argumento, o script desenha um ícone de reserva por
-código — útil num fork, não acompanha o repositório.
 
 ## A etapa Coleções
 
@@ -328,30 +306,9 @@ nunca". Entre os adesivos, `free` vence `demo`.
 Um jogo em duas coleções de status fica com o que estiver mais acima.
 `family` e adesivo não entram nessa conta.
 
-### O que saiu
-
-`boardgame` e `shovelware` foram removidos. Um `config.json` que ainda os
-tenha é limpo ao salvar, com aviso antes.
-
 ## Family Share
 
 O canto verde marca os jogos que estão na sua biblioteca por empréstimo.
-Conseguir essa lista é mais difícil do que parece, e vale saber por quê.
-
-### A lista não existe no seu computador
-
-Procuramos. O `localconfig.vdf` guarda o seu `FamilyGroup` — id do grupo,
-nome, membros — e **nenhum jogo**. O nó `shared-familygroup` da barra
-lateral guarda só a ordem em que ele aparece. O cliente pede os appids ao
-servidor e os mantém em memória.
-
-As listas que a Steam serve na web também não resolvem, e isto foi
-**medido, não suposto**: `store.steampowered.com/dynamicstore/userdata/` e
-a página de jogos do perfil dizem o que você **pode jogar**, e com o Steam
-Families o emprestado entra nas duas. Dos 30 jogos que o `appmanifest`
-prova serem emprestados, 28 aparecem em `rgOwnedApps`, 28 em
-`rgOwnedPackages` e 24 de 24 na página do perfil. Subtrair qualquer uma
-delas apaga exatamente o alvo: 6% de acerto.
 
 ### O jeito certo: deixe o Steam montar a lista
 
@@ -371,31 +328,6 @@ O cliente sabe quais são. Então peça a ele:
 
 Pronto. A Vitrine passa a ler a lista completa do disco, como lê qualquer
 outra coleção. Refaça quando a biblioteca da família mudar.
-
-### Quando não há coleção
-
-Sem uma coleção mapeada, a Vitrine deduz, e avisa que está deduzindo. Dois
-sinais, nesta ordem de confiança:
-
-- **o `appmanifest`** — um jogo emprestado **e instalado** carrega
-  `SharedDepots` com o dono de cada depot. Exato, sem dedução. Só cobre
-  os instalados.
-- **o cache dos membros** — o cliente guarda em
-  `WebStorage > FriendsOwnedGames_storage_<accountid>` a biblioteca de
-  cada membro da família. Incompleto: medido em 23% de acerto.
-
-```
-python vitrine.py --comparar-family   # mede cada método contra o appmanifest
-python vitrine.py --conferir-family   # mede o método atual
-python vitrine.py --listar-family     # mostra o que ele achou
-```
-
-O `--comparar-family` é a ferramenta honesta aqui: ele usa os seus jogos
-instalados como gabarito, porque é o único pedaço onde existe resposta
-certa em disco, e mostra o acerto de cada variante lado a lado.
-
-`--sem-family` desliga; `"family_auto": false` desliga de vez;
-`"family_fonte": "deteccao"` ignora a coleção e força a dedução.
 
 ## Uso
 
