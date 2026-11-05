@@ -174,7 +174,7 @@ class Sessao:
         if self.tem_steam:
             itens.append((True, "Steam encontrado", str(self.steam)))
         else:
-            itens.append((False, "Steam nao encontrado",
+            itens.append((False, "Steam não encontrado",
                           (self.erro_steam or "").splitlines()[0]
                           if self.erro_steam else ""))
             return itens
@@ -183,20 +183,20 @@ class Sessao:
             itens.append((True, f"{len(self.listas)} status mapeados",
                           f"{len(self.appids_com_badge())} jogos com badge"))
         else:
-            itens.append((False, "nenhuma colecao mapeada",
+            itens.append((False, "nenhuma coleção mapeada",
                           (self.erro_listas or "").splitlines()[0]
                           if self.erro_listas
-                          else "faca isso na etapa Colecoes"))
+                          else "faça isso na etapa Coleções"))
 
         if self.moldura:
             if self.moldura_pronta:
                 itens.append((True, "moldura pronta", ""))
             else:
-                itens.append((False, "moldura ligada mas molduras/ esta vazia",
-                              "gere na etapa Aparencia"))
+                itens.append((False, "moldura ligada mas molduras/ está vazia",
+                              "gere na etapa Aparência"))
         else:
             itens.append((None, "moldura desligada",
-                          "as capas recebem so o badge, sem a caixa"))
+                          "as capas recebem só o badge, sem a caixa"))
 
         itens.append((True, "chave da SteamGridDB configurada", "")
                      if self.tem_chave else

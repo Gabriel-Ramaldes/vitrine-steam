@@ -18,27 +18,27 @@ IGNORAR = NADA          # nome antigo, mantido pra nao quebrar chamador velho
 
 # O vocabulario e fechado de proposito. Nao da pra inventar status novo
 # pela tela: cada um precisa de arte desenhada e de um lugar na capa, e
-# "status solto que ninguem desenhou" so gera badge faltando.
+# "status solto que ninguém desenhou" so gera badge faltando.
 #
 # Tres encaixes independentes, que convivem numa mesma capa:
 
 # 1. o status do jogo. Um so, ou nenhum. Esta e a unica dimensao em que
 #    existe disputa - um jogo pode cair em duas colecoes de status, e ai
 #    a ordem abaixo decide. E fixa: ela descreve o quanto do jogo foi
-#    consumido, de "acabei tudo" a "nao acaba nunca", e mexer nisso so
+#    consumido, de "acabei tudo" a "não acaba nunca", e mexer nisso so
 #    produziria resultado errado.
 STATUS = ["platinado", "zerado", "suficiente", "abandonado", "pausado", "online"]
 
 DESCRICAO = {
     "platinado": "terminei e peguei todas as conquistas",
     "zerado": "terminei o jogo",
-    "suficiente": "nao tem um fim, mas joguei o bastante - 'done'",
-    "abandonado": "nao gostei ou enjoei; nao sei se volto",
+    "suficiente": "não tem um fim, mas joguei o bastante - 'done'",
+    "abandonado": "não gostei ou enjoei; não sei se volto",
     "pausado": "joguei um pouco e parei; uma hora volto - 'shelved'",
-    "online": "nao tem fim porque e um jogo online",
-    "family": "esta na sua biblioteca por emprestimo da familia",
-    "free": "o jogo e gratuito",
-    "demo": "e uma demo ou playtest",
+    "online": "não tem fim porque é um jogo online",
+    "family": "está na sua biblioteca por empréstimo da família",
+    "free": "o jogo é gratuito",
+    "demo": "é uma demo ou playtest",
 }
 
 # 2. o modificador. Booleano: o jogo e ou nao e. Nao disputa com nada -
@@ -170,15 +170,15 @@ class Mapa:
         conviver com duas linhas mortas no config.
         """
         if not self.colecoes:
-            return False, ("nenhuma colecao foi lida: nao vou apagar nada do "
-                           "config ate ler o Steam direito")
+            return False, ("nenhuma coleção foi lida: não vou apagar nada do "
+                           "config até ler o Steam direito")
         orfas = self.orfas()
         if not orfas:
             return True, ""
         if len(orfas) > len(self.atual) / 2:
-            return False, (f"{len(orfas)} de {len(self.atual)} colecoes "
-                           f"mapeadas nao apareceram. Isso costuma ser leitura "
-                           f"da conta errada, entao nao vou apagar nada. "
+            return False, (f"{len(orfas)} de {len(self.atual)} coleções "
+                           f"mapeadas não apareceram. Isso costuma ser leitura "
+                           f"da conta errada, então não vou apagar nada. "
                            f"Confira \"user\" no config.json")
         return True, ""
 
@@ -190,28 +190,28 @@ class Mapa:
                 continue          # esses nao usam PNG de badge
             if not self.tem_badge(s):
                 fora.append(f"sem {self.badges_dir.name}/{s}.png - "
-                            f"as colecoes com status '{s}' ficam de fora")
+                            f"as coleções com status '{s}' ficam de fora")
         orfas = self.orfas()
         if orfas:
             pode, porque = self.pode_podar()
             lista = ", ".join(f'"{n}"' for n in orfas[:4])
             resto = f" e mais {len(orfas) - 4}" if len(orfas) > 4 else ""
             if pode:
-                fora.append(f"{len(orfas)} colecao(oes) do config nao existem "
-                            f"mais no Steam ({lista}{resto}) - serao removidas "
+                fora.append(f"{len(orfas)} coleção(oes) do config não existem "
+                            f"mais no Steam ({lista}{resto}) - serão removidas "
                             f"ao salvar")
             else:
-                fora.append(f"{len(orfas)} colecao(oes) do config nao "
+                fora.append(f"{len(orfas)} coleção(oes) do config não "
                             f"apareceram ({lista}{resto}). {porque}")
         for antigo, colecoes in self.legados().items():
             quais = ", ".join(f'"{n}"' for n in colecoes[:3])
             resto = f" e mais {len(colecoes) - 3}" if len(colecoes) > 3 else ""
-            fora.append(f"'{antigo}' nao existe mais na ferramenta - "
+            fora.append(f"'{antigo}' não existe mais na ferramenta - "
                         f"{quais}{resto} vai(vao) ficar sem status ao salvar")
         dinamicas = [c["nome"] for c in self.colecoes if c.get("dinamica")]
         if dinamicas:
-            fora.append(f"{len(dinamicas)} colecao(oes) dinamica(s) nao podem "
-                        f"ser usadas: o Steam nao grava a lista de jogos delas")
+            fora.append(f"{len(dinamicas)} coleção(oes) dinâmica(s) não podem "
+                        f"ser usadas: o Steam não grava a lista de jogos delas")
         return fora
 
     # ---- escrita --------------------------------------------------------

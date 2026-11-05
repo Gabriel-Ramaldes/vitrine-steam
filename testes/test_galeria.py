@@ -99,7 +99,7 @@ def t_adotar_arquivo_do_disco(tmp):
     try:
         G.adotar_arquivo(440, d / "nao_existe.png", pasta=d / "capas")
     except ValueError as e:
-        assert "nao achei" in str(e)
+        assert "não achei" in str(e)
     return "adotar arquivo do disco valida existencia e formato"
 
 

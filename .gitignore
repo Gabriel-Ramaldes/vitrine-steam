@@ -56,3 +56,8 @@ __pycache__/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# build do Linux
+dist/
+build_tmp/
+/vitrine

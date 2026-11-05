@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Vitrine
+GenericName=Organizador de capas da Steam
+Comment=Emoldura a biblioteca Steam e marca em que pé está cada jogo
+Exec=vitrine
+Icon=vitrine
+Terminal=false
+Categories=Game;Utility;
+Keywords=steam;capas;biblioteca;badges;grid;
+StartupWMClass=vitrine

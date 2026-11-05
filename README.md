@@ -517,10 +517,12 @@ capas/              suas capas manuais, por appid
 originais/          backup das capas que substituimos
 estado.json         o que gravamos, para saber o que desfazer
 
-COMECE_AQUI.md      o caminho do zero ate a biblioteca emoldurada
-DESENVOLVIMENTO.md  as decisoes, as hipoteses que morreram e por que
-PLANO.md            o desenho da unificacao
-THIRD_PARTY.md      dependencias, o que nao vai no repo, e por que
+docs/
+  COMECE_AQUI.md    o caminho do zero ate a biblioteca emoldurada
+  THIRD_PARTY.md    dependencias, licencas e o que nao vai no repo
+  family-share.md   por que nao da pra detectar emprestimo sozinho
+  LEIAME.txt        acompanha o Vitrine.exe
+  LEIAME-linux.txt  acompanha o pacote .tar.gz
 ```
 
 A regra que se repete: **a lógica num módulo sem interface, a tela só
@@ -570,13 +572,14 @@ A arte de capa pertence às publicadoras: ela fica na sua máquina, em
 
 ## Licença
 
-MIT — veja `LICENSE`. Dependências e referências em `THIRD_PARTY.md`.
+MIT — veja `LICENSE`. Dependências e referências em
+[`docs/THIRD_PARTY.md`](docs/THIRD_PARTY.md).
 
 Em `tools/` há também as sondas usadas na investigação do Family Share
 (`sonda_family.py` e companhia). Elas só leem, não alteram nada, e estão
-ali para quem quiser reproduzir as medições descritas no
-`DESENVOLVIMENTO.md`.
+ali para quem quiser reproduzir as medições descritas em
+[`docs/family-share.md`](docs/family-share.md).
 
-Se for mexer no código, leia antes o [`DESENVOLVIMENTO.md`](DESENVOLVIMENTO.md):
-ele registra o que já foi tentado e falhou, e economiza repetir as mesmas
-três hipóteses mortas sobre Family Share.
+Se for mexer na detecção de Family Share, leia esse documento antes: ele
+registra o que já foi tentado e falhou, com os números, e economiza
+repetir as mesmas três hipóteses mortas.

@@ -402,13 +402,13 @@ def t_conferencia_nao_e_circular(tmp):
     txt = "\n".join(linhas)
     assert "emprestados instalados    : 2" in txt, txt
     # a deducao pega so o 555 -> 50%, nao 100%
-    assert "a deducao sozinha pegou   : 1 (50%)" in txt, txt
+    assert "a dedução sozinha pegou   : 1 (50%)" in txt, txt
     assert "PERDEU 1: 777" in txt, txt
     # mas o resultado final resgata o 777 pelo appmanifest
     assert 777 in final and 555 in final, final
     assert 666 not in final, final
     # e o aviso de extrapolacao aparece
-    assert "o appmanifest nao resgata" in txt, txt
+    assert "o appmanifest não resgata" in txt, txt
     return "conferencia mede a deducao, nao o sinal exato (nao e circular)"
 
 

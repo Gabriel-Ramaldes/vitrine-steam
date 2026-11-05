@@ -59,7 +59,7 @@ echo.
 echo   A pasta assets viaja inteira dentro do exe - badges, molduras,
 echo   adesivos e icone. Ele funciona sozinho, sem pasta ao lado.
 echo.
-echo   Pra distribuir, mande Vitrine.exe e LEIAME.txt. So isso.
+echo   Pra distribuir, mande Vitrine.exe e docs\LEIAME.txt. So isso.
 echo.
 echo   O que ELE CRIA ao lado de si mesmo: config.json, originais\,
 echo   capas\, preview\, molduras\ e estado.json. Se mover o exe,

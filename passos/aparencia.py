@@ -21,7 +21,7 @@ from app import Passo
 
 
 class Aparencia(Passo):
-    titulo = "Aparencia"
+    titulo = "Aparência"
 
     @staticmethod
     def precisa(sessao):
@@ -31,9 +31,9 @@ class Aparencia(Passo):
         self.imagens = {}
         self.gerando = False
 
-        ttk.Label(self, text="Aparencia", style="Titulo.TLabel").pack(anchor="w")
+        ttk.Label(self, text="Aparência", style="Titulo.TLabel").pack(anchor="w")
         ttk.Label(self, style="Sub.TLabel", wraplength=700, justify="left",
-                  text="Como a capa de cada jogo e montada."
+                  text="Como a capa de cada jogo é montada."
                   ).pack(anchor="w", pady=(2, 14))
 
         self.var_moldura = tk.BooleanVar(value=False)
@@ -41,12 +41,12 @@ class Aparencia(Passo):
         escolhas.pack(fill="x")
         for valor, titulo, txt in (
             (True, "Caixa de jogo",
-             "A arte vira a capa de uma caixa fisica: moldura azul, logo da "
+             "A arte vira a capa de uma caixa física: moldura azul, logo da "
              "Steam no topo e o badge na base. Platinado troca a caixa pela "
              "dourada e ganha a fita de 100%."),
             (False, "Badge solto",
-             "A arte original fica como esta, com o badge colado num canto. "
-             "Nao precisa de nenhum arquivo extra."),
+             "A arte original fica como está, com o badge colado num canto. "
+             "Não precisa de nenhum arquivo extra."),
         ):
             cx = ttk.Frame(escolhas, style="Painel.TFrame", padding=(12, 10))
             cx.pack(fill="x", pady=(0, 8))
@@ -67,7 +67,7 @@ class Aparencia(Passo):
                                    command=self.gerar)
         self.bt_gerar.pack(side="left")
         ttk.Label(linha, style="Fraco.TLabel", wraplength=460, justify="left",
-                  text="As molduras sao desenhadas por codigo, nao baixadas. "
+                  text="As molduras são desenhadas por código, não baixadas. "
                        "Gere de novo depois de mexer em tools/build_frame.py."
                   ).pack(side="left", padx=12)
 
@@ -109,7 +109,7 @@ class Aparencia(Passo):
             w.destroy()
         if not self.var_moldura.get():
             ttk.Label(self.previa, style="Painel.Fraco.TLabel",
-                      text="Sem moldura, a capa fica como a Steam serve, so "
+                      text="Sem moldura, a capa fica como a Steam serve, só "
                            "com o badge por cima.").pack(anchor="w")
             return
         if faltando:
@@ -148,7 +148,7 @@ class Aparencia(Passo):
             cfg = json.loads(caminho.read_text(encoding="utf-8-sig")) \
                 if caminho.exists() else {}
         except (OSError, ValueError) as e:
-            messagebox.showerror("Vitrine", f"nao consegui ler o config:\n{e}")
+            messagebox.showerror("Vitrine", f"não consegui ler o config:\n{e}")
             return
         cfg["moldura"] = bool(self.var_moldura.get())
         tmp = caminho.with_suffix(caminho.suffix + ".tmp")
@@ -160,7 +160,7 @@ class Aparencia(Passo):
                     caminho.read_bytes())
             tmp.replace(caminho)
         except OSError as e:
-            messagebox.showerror("Vitrine", f"nao consegui gravar:\n{e}")
+            messagebox.showerror("Vitrine", f"não consegui gravar:\n{e}")
             return
         self.atualizar()
         self.app.estado("formato salvo em config.json")

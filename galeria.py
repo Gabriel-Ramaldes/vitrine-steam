@@ -25,17 +25,17 @@ import core
 # alguma e pior que capa fraca, e so o primeiro motivo e mostrado.
 SEM_CAPA = "sem capa"
 FABRICADA = "fabricada pela Steam"
-SEM_PAGINA = "sem pagina na loja"
+SEM_PAGINA = "sem página na loja"
 FRACA = "capa fraca"
-MANUAL = "ja resolvida por voce"
+MANUAL = "já resolvida por você"
 
 EXPLICACAO = {
-    SEM_CAPA: "nao existe arte vertical em lugar nenhum",
+    SEM_CAPA: "não existe arte vertical em lugar nenhum",
     FABRICADA: "a Steam colou o banner horizontal no meio e borrou o resto",
-    SEM_PAGINA: "saiu da loja e perdeu a pagina, entao a API nao responde",
+    SEM_PAGINA: "saiu da loja e perdeu a página, então a API não responde",
     FRACA: "a medida de nitidez ficou baixa - pode ser header colado, mas "
-           "tambem pode ser arte minimalista legitima",
-    MANUAL: "voce ja colocou uma capa em capas/",
+           "também pode ser arte minimalista legítima",
+    MANUAL: "você já colocou uma capa em capas/",
 }
 
 
@@ -184,8 +184,8 @@ def adotar_bytes(appid, dados, pasta=None):
     senao o erro so apareceria la na frente, na hora de montar a capa.
     """
     if not core.eh_capa_valida(dados):
-        raise ValueError("isso nao parece uma capa vertical valida "
-                         "(esperado algo proximo de 2:3, como 600x900)")
+        raise ValueError("isso não parece uma capa vertical valida "
+                         "(esperado algo próximo de 2:3, como 600x900)")
     pasta = Path(pasta or (core.BASE_DIR / core.MANUAL_DIR_NAME))
     pasta.mkdir(parents=True, exist_ok=True)
     destino = pasta / f"{appid}.png"
@@ -208,7 +208,7 @@ def adotar_arquivo(appid, caminho, pasta=None):
     """Capa que o usuario escolheu no disco dele."""
     caminho = Path(caminho)
     if not caminho.is_file():
-        raise ValueError(f"nao achei {caminho}")
+        raise ValueError(f"não achei {caminho}")
     if caminho.stat().st_size > 48 << 20:
         raise ValueError("arquivo grande demais pra ser uma capa")
     return adotar_bytes(appid, caminho.read_bytes(), pasta)
@@ -274,7 +274,7 @@ def gravar_chave(chave, caminho=None):
     if not chave:
         raise ValueError("chave vazia")
     if len(chave) < 8 or any(c.isspace() for c in chave):
-        raise ValueError("isso nao parece uma chave da SteamGridDB")
+        raise ValueError("isso não parece uma chave da SteamGridDB")
     caminho = Path(caminho or (core.BASE_DIR / "sgdb_key.txt"))
     caminho.write_text(chave + "\n", encoding="utf-8")
     return caminho

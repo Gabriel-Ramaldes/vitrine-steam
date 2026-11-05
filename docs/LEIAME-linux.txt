@@ -1,0 +1,114 @@
+VITRINE  -  Linux e Steam Deck
+Emoldura a sua biblioteca Steam e marca em que pé está cada jogo.
+Sem fins lucrativos, feito por hobby.
+
+
+ANTES DE ABRIR
+--------------
+1. No Steam, crie Coleções para os status que você quer marcar
+   ("Zerados", "Platinados", "Pausados") e arraste os jogos pra dentro.
+   É dali que o status sai. Tem que ser coleção manual: as dinâmicas,
+   que o Steam monta por filtro, não servem.
+
+2. FECHE O STEAM. De verdade: Steam > Sair. Com ele aberto, as capas
+   somem quando ele fechar, porque o cliente reescreve essa pasta ao
+   sair.
+
+
+ABRIR
+-----
+  chmod +x vitrine
+  ./vitrine
+
+Não precisa instalar nada e não precisa de root. O programa guarda os
+dados dele na própria pasta, então deixe o binário num lugar seu
+(~/Vitrine, por exemplo), não em /tmp.
+
+Para ele aparecer no menu de aplicativos, com ícone:
+
+  ./instalar_atalho.sh
+
+Isso escreve só dentro do seu ~/.local. Nada vai pro sistema.
+
+
+NO STEAM DECK
+-------------
+Precisa ser no MODO ÁREA DE TRABALHO. No Modo Jogo o Steam está sempre
+rodando, e com ele aberto o trabalho é desfeito.
+
+  1. Segure o botão de liga/desliga > Mudar para área de trabalho.
+  2. Steam > Sair.  (no Modo Jogo ele volta sozinho; aqui não)
+  3. Abra a Vitrine, faça as sete etapas, aplique.
+  4. Volte ao Modo Jogo. As capas novas estarão lá.
+
+Se você preferir rodar a Vitrine pelo próprio Steam no Modo Jogo, não
+dá: ela precisa que o Steam esteja fechado.
+
+O teclado na tela sai com Steam + X, se precisar digitar a chave da
+SteamGridDB.
+
+
+A PRIMEIRA VEZ DEMORA
+---------------------
+Ele baixa a capa original de cada jogo e guarda antes de trocar, com uma
+pausa curta entre os downloads pra não martelar o servidor da Valve. Com
+uns 2.000 jogos, uns 15 minutos. Deixe rodando. Depois é rápido.
+
+
+DEU ERRADO?
+-----------
+"Desfazer tudo", na última etapa, devolve todas as capas originais.
+Nada aqui é irreversível.
+
+As capas não mudaram?   O Steam estava aberto. Feche, rode, abra de novo.
+"Não achei o Steam"?    Instalação fora do lugar comum, ou Steam em
+                        Flatpak com os dados noutro perfil. Dá pra
+                        apontar o caminho: ./vitrine --steam-path CAMINHO
+"GLIBC_2.XX not found"  O binário foi compilado numa distro mais nova
+                        que a sua. Veja "COMPILAR" abaixo.
+
+
+ONDE FICAM OS SEUS DADOS
+------------------------
+O programa cria estas pastas ao lado dele. Se mover o binário, leve
+junto:
+
+  originais/   as capas antigas, pra poder desfazer
+  capas/       capas que você escolher a mão
+  preview/     o resultado da simulação
+  molduras/    as molduras, desenhadas na etapa Aparência
+  config.json  o seu mapa de coleções
+  estado.json  o que foi aplicado
+
+
+COMPILAR POR CONTA PRÓPRIA
+--------------------------
+Precisa de Python 3 com tkinter:
+
+  Arch / SteamOS   pacote 'tk'
+  Debian / Ubuntu  sudo apt install python3-tk
+  Fedora           sudo dnf install python3-tkinter
+
+Depois:
+
+  ./build_linux.sh
+
+No fim ele diz qual glibc o binário que saiu exige. No SteamOS o sistema
+é somente leitura: compile dentro de um venv no seu /home, ou use a
+distrobox, em vez de tentar instalar coisa no sistema.
+
+
+CRÉDITOS
+--------
+Steam, Steam Deck e Steam Family são marcas da Valve Corporation.
+Obrigado à Valve pela logo e pelo próprio recurso de arte personalizada
+na biblioteca, que é o que permite isto existir.
+
+Os ícones de status são do Bootstrap Icons (licença MIT, incluída).
+As capas alternativas vêm da SteamGridDB e de quem envia arte pra lá.
+
+A arte de capa dos jogos pertence às publicadoras e fica só na sua
+máquina.
+
+Código e documentação completa:
+https://github.com/Gabriel-Ramaldes/vitrine

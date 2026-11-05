@@ -1,26 +1,38 @@
 """
 Etapa - Family Share.
 
-A parte mais confusa do produto, e ate aqui explicada so no README.
+A parte mais confusa do produto.
 
-A lista dos jogos emprestados NAO existe no seu computador, e nenhuma
-lista que a Steam serve na web separa o que e seu do que e emprestado -
-isso foi medido, nao suposto (ver DESENVOLVIMENTO.md, secao 7). Entao
-esta etapa faz duas coisas: mostra de onde o canto verde esta saindo
-hoje, e ensina o unico caminho que da a lista completa - deixar o proprio
-cliente materializa-la numa Colecao.
+A lista dos jogos emprestados NÃO existe no seu computador, e nenhuma
+lista que a Steam serve na web separa o que é seu do que é emprestado -
+isso foi medido, não suposto (ver docs/family-share.md). O único
+caminho que dá a lista completa é deixar o próprio cliente materializá-la
+numa Coleção.
+
+Por isso a escolha mora aqui e não na etapa Coleções: antes, o passo a
+passo terminava mandando voltar uma tela para marcar uma caixinha. Quem
+explica é quem deve deixar fazer.
 """
 import traceback
 import webbrowser
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 import core
 import tema
 from app import Passo
+from mapa import Mapa
 
 URL_FAMILY = "https://store.steampowered.com/account/familymanagement"
+
+PASSOS = (
+    "Na biblioteca do Steam, clique em STEAM FAMILY na barra lateral.",
+    "Selecione tudo: clique no primeiro jogo e Shift+clique no último.",
+    "Botão direito → Adicionar a → nova coleção, chamada FAMILY.",
+    "Feche o Steam (ele só grava as coleções ao sair).",
+    "Volte aqui e marque essa coleção na lista acima.",
+)
 
 
 class Family(Passo):
@@ -32,66 +44,177 @@ class Family(Passo):
 
     def montar(self):
         self.lido = False
+        self.mapa = None
+        self.marcas = {}
+
         ttk.Label(self, text="Family Share", style="Titulo.TLabel"
                   ).pack(anchor="w")
-        ttk.Label(self, style="Sub.TLabel", wraplength=720, justify="left",
-                  text="O canto verde marca os jogos que estao na sua "
-                       "biblioteca por emprestimo."
-                  ).pack(anchor="w", pady=(2, 12))
+        ttk.Label(self, style="Sub.TLabel", wraplength=760, justify="left",
+                  text="O canto verde marca os jogos que estão na sua "
+                       "biblioteca por empréstimo de alguém da família."
+                  ).pack(anchor="w", pady=(2, 14))
 
-        self.estado_cx = ttk.Frame(self, style="Painel.TFrame", padding=(14, 11))
+        # ---- a escolha ---------------------------------------------------
+        ttk.Label(self, text="Qual Coleção lista os jogos emprestados?",
+                  font=(tema.FONTE, 11, "bold")).pack(anchor="w")
+        ttk.Label(self, style="Sub.TLabel", wraplength=760, justify="left",
+                  text="Marque a Coleção que reúne o que é emprestado. "
+                       "Normalmente é uma só. Grava na hora."
+                  ).pack(anchor="w", pady=(2, 6))
+
+        self.escolha_cx = ttk.Frame(self, style="Painel.TFrame",
+                                    padding=(14, 10))
+        self.escolha_cx.pack(fill="x")
+
+        # ---- o que eu encontrei ------------------------------------------
+        ttk.Label(self, text="O que eu encontrei",
+                  font=(tema.FONTE, 11, "bold")).pack(anchor="w", pady=(16, 4))
+        self.estado_cx = ttk.Frame(self, style="Painel.TFrame",
+                                   padding=(14, 11))
         self.estado_cx.pack(fill="x")
 
-        ttk.Label(self, text="Como ter a lista completa",
-                  font=(tema.FONTE, 11, "bold")).pack(anchor="w", pady=(16, 2))
-        ttk.Label(self, style="Sub.TLabel", wraplength=720, justify="left",
-                  text="A lista nao existe em disco: o cliente pede os "
-                       "appids ao servidor e os mantem na memoria. Mas ele "
-                       "sabe quais sao - entao peca a ele."
-                  ).pack(anchor="w", pady=(0, 8))
+        # ---- como criar ---------------------------------------------------
+        self.criar_bt = ttk.Button(self, text="Ainda não tenho essa Coleção  ▾",
+                                   command=self.alternar_passos)
+        self.criar_bt.pack(anchor="w", pady=(16, 0))
 
-        passos_cx = ttk.Frame(self, style="Painel.TFrame", padding=(14, 11))
-        passos_cx.pack(fill="x")
-        for n, txt in enumerate((
-            "Na biblioteca do Steam, clique em STEAM FAMILY na barra lateral.",
-            "Selecione tudo: clique no primeiro jogo e Shift+clique no ultimo.",
-            "Botao direito -> Adicionar a -> nova colecao, chamada FAMILY.",
-            "Feche o Steam (ele so grava as colecoes ao sair).",
-            "Volte na etapa Colecoes e marque a caixa 'family' na linha FAMILY.",
-        ), 1):
-            f = ttk.Frame(passos_cx, style="Painel.TFrame")
+        self.passos_cx = ttk.Frame(self, style="Painel.TFrame",
+                                   padding=(14, 11))
+        for n, txt in enumerate(PASSOS, 1):
+            f = ttk.Frame(self.passos_cx, style="Painel.TFrame")
             f.pack(fill="x", pady=2)
             ttk.Label(f, text=f"{n}.", style="Painel.Fraco.TLabel", width=3
                       ).pack(side="left", anchor="n")
-            ttk.Label(f, text=txt, style="Painel.TLabel", wraplength=640,
+            ttk.Label(f, text=txt, style="Painel.TLabel", wraplength=660,
                       justify="left").pack(side="left")
+        ttk.Label(self.passos_cx, style="Painel.Fraco.TLabel", wraplength=660,
+                  justify="left",
+                  text="A lista não existe em disco: o cliente pede os appids "
+                       "ao servidor e os mantém na memória. Mas ele sabe quais "
+                       "são — então peça a ele."
+                  ).pack(anchor="w", pady=(8, 0))
 
         rodape = ttk.Frame(self)
-        rodape.pack(fill="x", pady=(12, 0))
+        rodape.pack(fill="x", pady=(14, 0))
         ttk.Button(rodape, text="Conferir de novo", command=self.ler
                    ).pack(side="left")
-        ttk.Button(rodape, text="Abrir a pagina da familia",
+        ttk.Button(rodape, text="Abrir a página da família",
                    command=lambda: webbrowser.open(URL_FAMILY)
                    ).pack(side="left", padx=8)
 
-        ttk.Label(self, style="Fraco.TLabel", wraplength=720, justify="left",
-                  text="Por que nao da pra detectar sozinho: as listas que a "
-                       "Steam serve na web dizem o que voce PODE JOGAR, e "
+        ttk.Label(self, style="Fraco.TLabel", wraplength=760, justify="left",
+                  text="Por que não dá para detectar sozinho: as listas que a "
+                       "Steam serve na web dizem o que você PODE JOGAR, e "
                        "desde o Steam Families isso inclui o emprestado. "
                        "Medido contra os jogos que o appmanifest prova serem "
                        "emprestados, subtrair essas listas acerta 6%. O "
-                       "appmanifest e exato, mas so cobre o que esta "
+                       "appmanifest é exato, mas só cobre o que está "
                        "instalado."
-                  ).pack(anchor="w", pady=(12, 0))
+                  ).pack(anchor="w", pady=(14, 0))
+
+    # ---- ciclo de vida ---------------------------------------------------
 
     def ao_entrar(self):
+        self.carregar_mapa()
         if not self.lido:
             self.ler()
+
+    def concluida(self):
+        return any(l["nome"] == "family" and l["appids"]
+                   for l in self.sessao.listas)
+
+    def alternar_passos(self):
+        if self.passos_cx.winfo_ismapped():
+            self.passos_cx.pack_forget()
+            self.criar_bt.configure(text="Ainda não tenho essa Coleção  ▾")
+        else:
+            self.passos_cx.pack(fill="x", pady=(6, 0), after=self.criar_bt)
+            self.criar_bt.configure(text="Ainda não tenho essa Coleção  ▴")
+
+    # ---- a escolha -------------------------------------------------------
+
+    def carregar_mapa(self):
+        """
+        Relê o mapeamento do disco toda vez que a etapa abre.
+
+        Duas telas mexem no mesmo config. Reler na entrada é o que evita
+        marcar aqui em cima de uma versão velha e apagar o que a outra
+        gravou.
+        """
+        s = self.sessao
+        if not s.tem_steam:
+            return
+        try:
+            colecoes, _ = core.ler_colecoes(s.steam, s.user)
+            config = core.carregar_config(s.caminho_config)
+        except Exception:
+            self.mapa = None
+            return
+        self.mapa = Mapa(colecoes, config, s.badges_dir)
+        self.desenhar_escolha()
+
+    def desenhar_escolha(self):
+        for w in self.escolha_cx.winfo_children():
+            w.destroy()
+        self.marcas.clear()
+        if self.mapa is None:
+            ttk.Label(self.escolha_cx, style="Painel.Erro.TLabel",
+                      text="não consegui ler as Coleções do Steam"
+                      ).pack(anchor="w")
+            return
+
+        linhas = [l for l in self.mapa.linhas() if not l["dinamica"]]
+        if not linhas:
+            ttk.Label(self.escolha_cx, style="Painel.Fraco.TLabel",
+                      text="nenhuma Coleção manual nesta conta"
+                      ).pack(anchor="w")
+            return
+
+        # uma Coleção por linha, em colunas, pra caber sem rolagem
+        colunas = 3 if len(linhas) > 8 else 2
+        grade = ttk.Frame(self.escolha_cx, style="Painel.TFrame")
+        grade.pack(fill="x")
+        for c in range(colunas):
+            grade.columnconfigure(c, weight=1, uniform="col")
+
+        for i, linha in enumerate(linhas):
+            nome = linha["nome"]
+            var = tk.BooleanVar(value=linha["family"])
+            self.marcas[nome] = var
+            rotulo = nome if len(nome) <= 24 else nome[:23] + "…"
+            ttk.Checkbutton(
+                grade, text=f"{rotulo}  ({linha['jogos']})", variable=var,
+                style="Painel.TCheckbutton",
+                command=lambda n=nome: self.marcou(n)
+            ).grid(row=i // colunas, column=i % colunas, sticky="w",
+                   padx=(0, 14), pady=2)
+
+    def marcou(self, nome):
+        """Marcar grava na hora: é uma caixinha só, não vale um botão."""
+        if self.mapa is None:
+            return
+        atual = {l["nome"]: l for l in self.mapa.linhas()}[nome]
+        self.mapa.definir(nome, status=atual["status"],
+                          family=self.marcas[nome].get(),
+                          adesivo=atual["adesivo"])
+        try:
+            self.mapa.salvar(self.sessao.caminho_config)
+        except OSError as e:
+            messagebox.showerror("Vitrine", f"não consegui gravar:\n{e}")
+            return
+        marcadas = [n for n, v in self.marcas.items() if v.get()]
+        self.app.estado(
+            f"family: {', '.join(marcadas)}" if marcadas
+            else "nenhuma Coleção marcada como family")
+        self.app.recarregar()
+        self.ler()
+
+    # ---- diagnóstico -----------------------------------------------------
 
     def ler(self):
         for w in self.estado_cx.winfo_children():
             w.destroy()
-        ttk.Label(self.estado_cx, text="lendo...", style="Painel.Fraco.TLabel"
+        ttk.Label(self.estado_cx, text="lendo…", style="Painel.Fraco.TLabel"
                   ).pack(anchor="w")
         s = self.sessao
         if not s.tem_steam:
@@ -125,50 +248,46 @@ class Family(Passo):
         def linha(estado, texto, detalhe=""):
             estilo = {True: "Painel.Ok.TLabel", False: "Painel.Erro.TLabel",
                       None: "Painel.Alerta.TLabel"}[estado]
-            marca = {True: "ok ", False: "X  ", None: "!  "}[estado]
+            marca = {True: "ok", False: "✕", None: "!"}[estado]
             f = ttk.Frame(self.estado_cx, style="Painel.TFrame")
             f.pack(fill="x", pady=1)
             ttk.Label(f, text=marca, style=estilo, width=4).pack(side="left")
             ttk.Label(f, text=texto, style="Painel.TLabel").pack(side="left")
             if detalhe:
                 ttk.Label(f, text=detalhe, style="Painel.Fraco.TLabel",
-                          wraplength=420, justify="left"
+                          wraplength=430, justify="left"
                           ).pack(side="left", padx=8)
 
         if d.get("erro"):
-            linha(False, "nao consegui ler", d["erro"].splitlines()[-1][:80])
+            linha(False, "não consegui ler", d["erro"].splitlines()[-1][:80])
             return
 
         if d.get("grupo"):
-            linha(True, f"Steam Family configurada",
+            linha(True, "Steam Family configurada",
                   f"grupo {d['grupo']}, {len(d.get('membros') or [])} membros")
         else:
             linha(None, "nenhuma Steam Family nesta conta",
-                  "se voce nao usa Family Share, pode pular esta etapa")
+                  "se você não usa Family Share, pode pular esta etapa")
             return
 
         n = d.get("colecao", 0)
         if n:
-            linha(True, f"{n} jogos vem de uma Colecao mapeada pra family",
-                  "esta e a fonte boa")
+            linha(True, f"{n} jogos vêm da Coleção que você marcou",
+                  "esta é a fonte boa")
         else:
-            linha(None, "nenhuma Colecao mapeada pra family",
-                  "siga os passos abaixo - e o unico jeito de ter a lista "
-                  "completa")
+            linha(None, "nenhuma Coleção marcada acima",
+                  "é o único jeito de ter a lista completa — se você ainda "
+                  "não tem essa Coleção, o botão abaixo explica como criar")
 
         linha(True, f"{d.get('appmanifest', 0)} confirmados pelo appmanifest",
-              "exato, mas so vale pros jogos instalados")
+              "exato, mas só vale para os jogos instalados")
 
         ws = d.get("cache") or {}
         por = ws.get("por_membro") or {}
         if por:
             linha(None, f"{d.get('uniao', 0)} jogos no cache dos membros",
-                  f"{len(por)} membro(s) cacheados - incompleto, "
+                  f"{len(por)} membro(s) em cache — incompleto, "
                   f"medido em 23% de acerto")
         if ws.get("sem_cache"):
             linha(None, f"{len(ws['sem_cache'])} membro(s) sem cache local",
-                  "jogos emprestados so por eles escapam da deducao")
-
-    def concluida(self):
-        return any(l["nome"] == "family" and l["appids"]
-                   for l in self.sessao.listas)
+                  "jogos emprestados só por eles escapam da dedução")

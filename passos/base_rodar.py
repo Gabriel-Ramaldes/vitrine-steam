@@ -73,7 +73,7 @@ class BaseRodar(Passo):
     def ao_sair(self):
         if self.trabalhando:
             if not messagebox.askokcancel(
-                    "Vitrine", "Ainda esta rodando. Sair e parar?"):
+                    "Vitrine", "Ainda está rodando. Sair e parar?"):
                 return False
             self.parar.set()
         return True
@@ -126,7 +126,7 @@ class BaseRodar(Passo):
             f.pack(fill="x", pady=1)
             ttk.Label(f, text="!  ", style="Painel.Alerta.TLabel", width=4
                       ).pack(side="left")
-            ttk.Label(f, text="o Steam esta aberto", style="Painel.TLabel"
+            ttk.Label(f, text="o Steam está aberto", style="Painel.TLabel"
                       ).pack(side="left")
             ttk.Label(f, text="feche antes de aplicar - ele reescreve o grid "
                               "ao sair", style="Painel.Fraco.TLabel"
@@ -176,7 +176,7 @@ class BaseRodar(Passo):
         topo.pack(fill="x")
         ttk.Label(topo, text="Rodar", style="Titulo.TLabel").pack(anchor="w")
         ttk.Label(topo, style="Fraco.TLabel",
-                  text="Simule primeiro, confira a pasta preview, e so entao "
+                  text="Simule primeiro, confira a pasta preview, e só então "
                        "aplique.").pack(anchor="w")
 
         self.checklist = ttk.Frame(self, style="Painel.TFrame",
@@ -187,7 +187,7 @@ class BaseRodar(Passo):
         op.pack(fill="x")
         self.var_todos = tk.BooleanVar(value=True)
         ttk.Checkbutton(op, text="emoldurar a biblioteca inteira "
-                                 "(badge so em quem tem colecao)",
+                                 "(badge só em quem tem coleção)",
                         variable=self.var_todos).pack(side="left")
         self.var_verbose = tk.BooleanVar(value=False)
         ttk.Checkbutton(op, text="detalhar", variable=self.var_verbose
@@ -248,7 +248,7 @@ class BaseRodar(Passo):
         if not simular:
             if steam_rodando() is True and not messagebox.askokcancel(
                     "Vitrine", "O Steam parece estar aberto. Ele reescreve as "
-                               "capas ao fechar, entao o resultado pode sumir.\n\n"
+                               "capas ao fechar, então o resultado pode sumir.\n\n"
                                "Continuar mesmo assim?"):
                 return
             if not messagebox.askokcancel(
@@ -291,7 +291,7 @@ class BaseRodar(Passo):
         appids = (self.sessao.appids_todos() if todos
                   else sorted(self.sessao.appids_com_badge()))
         universo_completo = set(appids)
-        rel.info(f"{len(appids)} jogos nesta execucao.\n")
+        rel.info(f"{len(appids)} jogos nesta execução.\n")
 
         op = rodar.Opcoes(dry_run=simular, out="preview", moldura=self.moldura,
                           todos=todos, verbose=verbose,
@@ -303,7 +303,7 @@ class BaseRodar(Passo):
 
     def cancelar(self):
         self.parar.set()
-        self.estado("parando no proximo jogo...")
+        self.estado("parando no próximo jogo...")
 
     def _terminou(self, dado):
         resumo, simular = dado
@@ -336,7 +336,7 @@ class BaseRodar(Passo):
             else:
                 subprocess.Popen(["xdg-open", str(pasta)])
         except Exception as e:
-            messagebox.showinfo("Vitrine", f"A pasta esta em:\n{pasta}\n\n({e})")
+            messagebox.showinfo("Vitrine", f"A pasta está em:\n{pasta}\n\n({e})")
 
     def desfazer(self):
         if self.trabalhando:

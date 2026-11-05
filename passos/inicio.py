@@ -12,7 +12,7 @@ from app import Passo
 
 
 class Inicio(Passo):
-    titulo = "Comecar"
+    titulo = "Começar"
 
     def montar(self):
         ttk.Label(self, text="Vitrine", style="Titulo.TLabel"
@@ -20,7 +20,7 @@ class Inicio(Passo):
         ttk.Label(self, style="Sub.TLabel", justify="left", wraplength=700,
                   text="Transforma a sua biblioteca Steam numa estante de "
                        "caixas de jogo: cada capa ganha uma moldura e um "
-                       "badge dizendo em que pe esta aquele jogo."
+                       "badge dizendo em que pé está aquele jogo."
                   ).pack(anchor="w", pady=(2, 14))
 
         cx = ttk.Frame(self, style="Painel.TFrame", padding=(16, 12))
@@ -28,11 +28,11 @@ class Inicio(Passo):
         ttk.Label(cx, text="O que vai acontecer", style="Painel.TLabel",
                   font=(tema.FONTE, 11, "bold")).pack(anchor="w")
         for linha in (
-            "O status de cada jogo sai das suas Colecoes do Steam. "
-            "Nenhuma lista pra manter a mao.",
-            "As capas originais sao guardadas em originais/ antes de "
-            "qualquer troca. Da pra desfazer tudo a qualquer momento.",
-            "Voce simula primeiro, confere numa pasta, e so entao aplica.",
+            "O status de cada jogo sai das suas Coleções do Steam. "
+            "Nenhuma lista pra manter à mão.",
+            "As capas originais são guardadas em originais/ antes de "
+            "qualquer troca. Dá pra desfazer tudo a qualquer momento.",
+            "Você simula primeiro, confere numa pasta, e só então aplica.",
         ):
             f = ttk.Frame(cx, style="Painel.TFrame")
             f.pack(fill="x", pady=2)
@@ -48,7 +48,7 @@ class Inicio(Passo):
                        "o resultado some e parece que nada funcionou."
                   ).pack(anchor="w")
 
-        ttk.Label(self, text="Como esta agora", style="TLabel",
+        ttk.Label(self, text="Como está agora", style="TLabel",
                   font=(tema.FONTE, 11, "bold")).pack(anchor="w", pady=(18, 4))
         self.lista = ttk.Frame(self, style="Painel.TFrame", padding=(14, 10))
         self.lista.pack(fill="x")

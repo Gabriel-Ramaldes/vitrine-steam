@@ -22,7 +22,7 @@ from mapa import Mapa, NADA, STATUS, ADESIVOS, DESCRICAO
 
 
 class Colecoes(Passo):
-    titulo = "Colecoes"
+    titulo = "Coleções"
 
     @staticmethod
     def precisa(sessao):
@@ -36,13 +36,15 @@ class Colecoes(Passo):
         self.app.agendar(60, self.carregar)
 
     def ao_entrar(self):
-        if self.mapa is None:
+        # a etapa Family grava no mesmo config. Reler na entrada, menos
+        # quando ha edicao em curso aqui - essa ninguem pode atropelar.
+        if self.mapa is None or not self.mapa.sujo:
             self.carregar()
 
     def ao_sair(self):
         if self.mapa is not None and self.mapa.sujo:
             return messagebox.askokcancel(
-                "Vitrine", "Ha alteracoes nao salvas no mapeamento.\n"
+                "Vitrine", "Ha alterações não salvas no mapeamento.\n"
                            "Sair sem salvar?")
         return True
 
@@ -52,12 +54,12 @@ class Colecoes(Passo):
     def _monta(self):
         topo = ttk.Frame(self, padding=(16, 14, 16, 8))
         topo.pack(fill="x")
-        ttk.Label(topo, text="Mapear colecoes", style="Titulo.TLabel").pack(anchor="w")
+        ttk.Label(topo, text="Mapear coleções", style="Titulo.TLabel").pack(anchor="w")
         self.lb_sub = ttk.Label(
-            topo, style="Fraco.TLabel",
-            text="Status: um por jogo, no canto inferior.   "
-                 "Family: soma a qualquer status.   "
-                 "Adesivo: free ou demo.   Nada e gravado ate voce salvar.")
+            topo, style="Fraco.TLabel", wraplength=860, justify="left",
+            text="Status: um por jogo, no canto inferior da capa.    "
+                 "Adesivo: FREE ou DEMO.    Nada é gravado até você salvar.\n"
+                 "Os jogos emprestados da família ficam na etapa seguinte.")
         self.lb_sub.pack(anchor="w", pady=(2, 0))
 
         corpo = ttk.Frame(self, padding=(16, 0, 16, 0))
@@ -106,11 +108,11 @@ class Colecoes(Passo):
                   ).pack(anchor="w", pady=(2, 4))
         ttk.Label(cx, style="Painel.Fraco.TLabel", wraplength=190,
                   justify="left",
-                  text="Um jogo em duas colecoes de status fica com o que "
+                  text="Um jogo em duas coleções de status fica com o que "
                        "estiver mais acima nesta lista.").pack(anchor="w")
         ttk.Label(cx, style="Painel.Fraco.TLabel", wraplength=190,
-                  justify="left", text="family e adesivo nao disputam: sao "
-                                       "lugares proprios na capa."
+                  justify="left", text="family e adesivo não disputam: são "
+                                       "lugares próprios na capa."
                   ).pack(anchor="w", pady=(5, 0))
 
         # --- avisos ---
@@ -136,7 +138,7 @@ class Colecoes(Passo):
     # ---- dados ----------------------------------------------------------
 
     def carregar(self):
-        self.estado("lendo as colecoes do Steam...")
+        self.estado("lendo as coleções do Steam...")
         self.update_idletasks()
         try:
             steam = core.find_steam_path()
@@ -146,7 +148,7 @@ class Colecoes(Passo):
             user = user or grid.parent.parent.name
             colecoes, avisos = core.ler_colecoes(steam, user)
         except core.ErroCore as e:
-            self.estado("nao consegui ler o Steam")
+            self.estado("não consegui ler o Steam")
             messagebox.showerror("Vitrine", str(e))
             return
         except Exception:
@@ -157,7 +159,7 @@ class Colecoes(Passo):
         self.mapa = Mapa(colecoes, config, core.BASE_DIR / "badges")
         self.extra = list(avisos)
         self.desenhar()
-        self.estado(f"{len(colecoes)} colecoes - Steam em {steam}")
+        self.estado(f"{len(colecoes)} coleções - Steam em {steam}")
 
     def desenhar(self):
         for w in self.lista.winfo_children():
@@ -170,13 +172,11 @@ class Colecoes(Passo):
         # fechado: nao existe campo livre pra inventar status.
         self.lista.columnconfigure(0, weight=1, minsize=230)
         self.lista.columnconfigure(1, minsize=52)
-        self.lista.columnconfigure(2, minsize=140)
-        self.lista.columnconfigure(3, minsize=74)
-        self.lista.columnconfigure(4, minsize=120)
+        self.lista.columnconfigure(2, minsize=150)
+        self.lista.columnconfigure(3, minsize=130)
 
-        cabecalho = ((0, "colecao", "w"), (1, "jogos", "e"),
-                     (2, "status", "w"), (3, "family", "center"),
-                     (4, "adesivo", "w"))
+        cabecalho = ((0, "coleção", "w"), (1, "jogos", "e"),
+                     (2, "status", "w"), (3, "adesivo", "w"))
         for col, txt, anc in cabecalho:
             ttk.Label(self.lista, text=txt, style="Fraco.TLabel",
                       background=tema.PAINEL, anchor=anc).grid(
@@ -195,16 +195,17 @@ class Colecoes(Passo):
                                        padx=6, pady=2)
 
             if linha["dinamica"]:
-                ttk.Label(self.lista, text="dinamica - sem lista de jogos",
+                ttk.Label(self.lista, text="dinâmica — sem lista de jogos",
                           background=tema.PAINEL, style="Fraco.TLabel",
-                          anchor="w").grid(row=i, column=2, columnspan=3,
+                          anchor="w").grid(row=i, column=2, columnspan=2,
                                            sticky="ew", padx=6, pady=2)
                 continue
 
             st = tk.StringVar(value=linha["status"] or NADA)
-            fam = tk.BooleanVar(value=linha["family"])
             ad = tk.StringVar(value=linha["adesivo"] or NADA)
-            self.combos[nome] = (st, fam, ad)
+            # o family e escolhido na etapa Family; aqui so viaja junto
+            # pra nao ser apagado quando esta tela salvar
+            self.combos[nome] = (st, linha["family"], ad)
 
             cb = ttk.Combobox(self.lista, textvariable=st, values=op_status,
                               state="readonly", width=13,
@@ -212,20 +213,15 @@ class Colecoes(Passo):
                               else "TCombobox")
             cb.grid(row=i, column=2, sticky="ew", padx=6, pady=2)
 
-            ck = ttk.Checkbutton(self.lista, variable=fam,
-                                 style="Fam.TCheckbutton")
-            ck.grid(row=i, column=3, pady=2)
-
             cb2 = ttk.Combobox(self.lista, textvariable=ad, values=op_adesivo,
                                state="readonly", width=11,
                                style="Vazio.TCombobox" if not linha["adesivo"]
                                else "TCombobox")
-            cb2.grid(row=i, column=4, sticky="ew", padx=(6, 12), pady=2)
+            cb2.grid(row=i, column=3, sticky="ew", padx=(6, 12), pady=2)
 
             for w in (cb, cb2):
                 w.bind("<<ComboboxSelected>>",
                        lambda e, n=nome, a=cb, b=cb2: self.mudou(n, a, b))
-            ck.configure(command=lambda n=nome, a=cb, b=cb2: self.mudou(n, a, b))
 
             if linha["legado"]:
                 ttk.Label(self.lista, text="!", background=tema.PAINEL,
@@ -247,16 +243,16 @@ class Colecoes(Passo):
     # ---- acoes ----------------------------------------------------------
 
     def mudou(self, nome, cb, cb2):
-        st, fam, ad = self.combos[nome]
+        st, family, ad = self.combos[nome]
         status = st.get() if st.get() != NADA else None
         adesivo = ad.get() if ad.get() != NADA else None
         # combo vazio fica apagado, pra vista bater o que esta e o que nao esta
         cb.configure(style="Vazio.TCombobox" if status is None else "TCombobox")
         cb2.configure(style="Vazio.TCombobox" if adesivo is None else "TCombobox")
-        self.mapa.definir(nome, status=status, family=fam.get(),
+        self.mapa.definir(nome, status=status, family=family,
                           adesivo=adesivo)
         self.desenhar_avisos()
-        self.estado("alteracoes nao salvas", alerta=True)
+        self.estado("alterações não salvas", alerta=True)
 
     def salvar(self):
         if self.mapa is None:
@@ -265,11 +261,11 @@ class Colecoes(Passo):
         try:
             caminho = self.mapa.salvar(self.caminho_config)
         except OSError as e:
-            messagebox.showerror("Vitrine", f"Nao consegui gravar:\n{e}")
+            messagebox.showerror("Vitrine", f"Não consegui gravar:\n{e}")
             return
         extra = ""
         if podadas:
-            extra = (f" - {podadas} colecao(oes) que nao existem mais no "
+            extra = (f" - {podadas} coleção(oes) que não existem mais no "
                      f"Steam sairam do arquivo")
         self.estado(f"salvo em {caminho.name} (o anterior virou "
                     f"{caminho.name}.bak){extra}")

@@ -157,7 +157,7 @@ def t_orfa_e_podada_ao_salvar(tmp):
              badges(tmp / "i", "zerado", "pausado", "online"))
     assert m.orfas() == ["Sumida"]
     assert m.podadas() == 1
-    assert any("serao removidas" in a for a in m.avisos()), m.avisos()
+    assert any("serão removidas" in a for a in m.avisos()), m.avisos()
     assert "Sumida" not in m.para_config()["colecoes"]
     assert set(m.para_config()["colecoes"]) == {"A", "B"}
     return "colecao que sumiu do Steam e removida ao salvar"
@@ -171,7 +171,7 @@ def t_trava_quando_nao_leu_colecao_nenhuma(tmp):
     m = Mapa([], {"colecoes": {"A": "zerado", "B": "pausado"}},
              badges(tmp / "j2", "zerado", "pausado"))
     pode, porque = m.pode_podar()
-    assert pode is False and "nenhuma colecao" in porque, porque
+    assert pode is False and "nenhuma coleção" in porque, porque
     assert m.podadas() == 0
     assert m.para_config()["colecoes"] == {"A": "zerado", "B": "pausado"}
     return "leitura vazia nao apaga nada"

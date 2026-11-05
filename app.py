@@ -16,7 +16,7 @@ try:
     import tkinter as tk
     from tkinter import ttk, messagebox
 except ImportError:
-    sys.exit("Esta aplicacao precisa do tkinter.\n"
+    sys.exit("Esta aplicação precisa do tkinter.\n"
              "No Windows ele vem com o Python de python.org - reinstale\n"
              "marcando 'tcl/tk and IDLE'. No Linux: apt install python3-tk.")
 
@@ -64,8 +64,8 @@ class App(tk.Tk):
     def __init__(self, passos=None):
         super().__init__()
         self.title("Vitrine")
-        self.geometry("1120x760")
-        self.minsize(900, 620)
+        self.minsize(880, 600)
+        self._tamanho()
         self._icone()
         tema.aplicar(self)
 
@@ -113,6 +113,25 @@ class App(tk.Tk):
 
     # ---- estrutura -------------------------------------------------------
 
+    def _tamanho(self):
+        """
+        Abre do tamanho que couber, centralizada.
+
+        1120x760 fixo nasceu de uma tela grande. A do Steam Deck tem
+        1280x800: com a barra de titulo e o painel do KDE, uma janela de
+        760 de altura nasce com o rodape embaixo da borda da tela, e quem
+        esta no Deck nao tem como arrastar pra cima.
+        """
+        try:
+            lt, at = self.winfo_screenwidth(), self.winfo_screenheight()
+        except Exception:
+            lt, at = 1366, 768
+        larg = max(880, min(1120, lt - 80))
+        alt = max(600, min(760, at - 120))
+        x = max(0, (lt - larg) // 2)
+        y = max(0, (at - alt) // 3)      # um terco: a janela fica mais alta
+        self.geometry(f"{larg}x{alt}+{x}+{y}")
+
     def _icone(self):
         """
         O icone da janela e da barra de tarefas.
@@ -140,8 +159,14 @@ class App(tk.Tk):
             pass
 
     def _monta(self):
+        # o rodape e empacotado PRIMEIRO, preso embaixo: quem empacota
+        # antes reserva o espaco. Ao contrario, uma etapa mais alta que a
+        # janela empurra Voltar/Avancar pra fora e prende o usuario.
+        pe = ttk.Frame(self, padding=(20, 10, 20, 14))
+        pe.pack(side="bottom", fill="x")
+
         corpo = ttk.Frame(self)
-        corpo.pack(fill="both", expand=True)
+        corpo.pack(side="top", fill="both", expand=True)
 
         lateral = ttk.Frame(corpo, style="Painel.TFrame", padding=(0, 14))
         lateral.pack(side="left", fill="y")
@@ -153,11 +178,9 @@ class App(tk.Tk):
         self.area = ttk.Frame(corpo)
         self.area.pack(side="left", fill="both", expand=True)
 
-        pe = ttk.Frame(self, padding=(20, 10, 20, 14))
-        pe.pack(fill="x")
         self.lb_estado = ttk.Label(pe, style="Fraco.TLabel", text="")
         self.lb_estado.pack(side="left")
-        self.bt_proximo = ttk.Button(pe, text="Avancar  >",
+        self.bt_proximo = ttk.Button(pe, text="Avançar  >",
                                      style="Forte.TButton",
                                      command=self.proximo)
         self.bt_proximo.pack(side="right")
@@ -186,7 +209,7 @@ class App(tk.Tk):
                 return
             self._frame(self.atual).pack_forget()
         if not forcado and not self.passos[i].precisa(self.sessao):
-            self.estado(f"'{self.passos[i].titulo}' ainda nao esta liberada")
+            self.estado(f"'{self.passos[i].titulo}' ainda não está liberada")
             if self.atual >= 0:
                 self._frame(self.atual).pack(fill="both", expand=True)
             return
@@ -198,7 +221,7 @@ class App(tk.Tk):
         self.bt_anterior.configure(
             state="normal" if i > 0 else "disabled")
         self.bt_proximo.configure(
-            text="Avancar  >" if i < len(self.passos) - 1 else "Concluir",
+            text="Avançar  >" if i < len(self.passos) - 1 else "Concluir",
             state="normal" if i < len(self.passos) - 1 else "disabled")
 
     def proximo(self):
@@ -340,11 +363,11 @@ def main():
     try:
         carregar_passos()
     except ImportError as e:
-        sys.exit(f"nao achei as etapas: {e}")
+        sys.exit(f"não achei as etapas: {e}")
     try:
         App().mainloop()
     except tk.TclError as e:
-        sys.exit(f"Nao consegui abrir a janela: {e}")
+        sys.exit(f"Não consegui abrir a janela: {e}")
 
 
 if __name__ == "__main__":

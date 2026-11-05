@@ -167,7 +167,7 @@ def t_conferir_cobra_colecao_mapeada(tmp):
     s.steam = Path("/s"); s.config = {}; s.listas = []
     itens = com_core(s.conferir, load_state=lambda: {"aplicados": []})
     impeditivos = [i for i in itens if i[0] is False]
-    assert any("colecao" in i[1] for i in impeditivos), itens
+    assert any("coleção" in i[1] for i in impeditivos), itens
     return "sem colecao mapeada, a conferencia marca como impeditivo"
 
 

@@ -64,7 +64,7 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
     destino_dir = (BASE_DIR / op.out) if op.dry_run else grid_dir
     if op.dry_run:
         destino_dir.mkdir(exist_ok=True)
-        rel.info(f"MODO DRY-RUN: nada sera escrito no Steam. Saida em {destino_dir}\n")
+        rel.info(f"MODO DRY-RUN: nada será escrito no Steam. Saida em {destino_dir}\n")
 
     state = load_state()
     ja_aplicados = set(state.get("aplicados", []))   # escritos por nos antes
@@ -117,7 +117,7 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
                 rel.info(f"{prefixo}: erro ao compor - {e}")
                 falhou += 1
                 continue
-            rotulo = "+".join(usados) or "(so moldura)"
+            rotulo = "+".join(usados) or "(só moldura)"
         else:
             escolhida, perdedoras = resolver_badge(appid, listas)
             if escolhida is None:
@@ -143,7 +143,7 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
                     outro.unlink(missing_ok=True)
             aplicados.add(appid)
 
-        aviso = ("  <- tambem em: " + ", ".join(perdidos)) if perdidos else ""
+        aviso = ("  <- também em: " + ", ".join(perdidos)) if perdidos else ""
         rel.item(i, len(appids), appid, rotulo, origem, aviso)
         ok += 1
         if origem in ("CDN", "API da loja", "SteamGridDB", "GERADA do header"):
@@ -161,13 +161,13 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
 
     if orfaos and not op.dry_run and len(orfaos) > max(25, len(ja_aplicados) // 10):
         rel.info(f"\n[!] {len(orfaos)} capas seriam removidas de uma vez "
-              f"({len(orfaos) * 100 // max(1, len(ja_aplicados))}% do que ja foi "
+              f"({len(orfaos) * 100 // max(1, len(ja_aplicados))}% do que já foi "
               f"aplicado).")
-        rel.info("[!] Isso costuma indicar configuracao trocada, nao intencao.")
-        resp = confirmar(f"{len(orfaos)} capas serao removidas de uma vez "
+        rel.info("[!] Isso costuma indicar configuração trocada, não intenção.")
+        resp = confirmar(f"{len(orfaos)} capas serão removidas de uma vez "
                          f"({len(orfaos) * 100 // max(1, len(ja_aplicados))}% do "
-                         f"que ja foi aplicado). Isso costuma indicar "
-                         f"configuracao trocada. Confirmar a remocao?")
+                         f"que já foi aplicado). Isso costuma indicar "
+                         f"configuração trocada. Confirmar a remocao?")
         if not resp:
             rel.info("    Pulado. Nenhuma capa removida.")
             orfaos = set()
@@ -186,7 +186,7 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
                         break
             rel.info(f"{appid}: saiu de todas as listas, badge removido")
     elif orfaos:
-        rel.info(f"\n{len(orfaos)} jogo(s) sairam das listas e teriam o badge "
+        rel.info(f"\n{len(orfaos)} jogo(s) saíram das listas e teriam o badge "
               f"removido: {sorted(orfaos)}")
 
     if not op.dry_run:
@@ -201,7 +201,7 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
 
     if conflitos:
         rel.info("\n" + "-" * 60)
-        rel.info(f"{len(conflitos)} jogo(s) estao em mais de uma colecao mapeada.")
+        rel.info(f"{len(conflitos)} jogo(s) estão em mais de uma coleção mapeada.")
         # sobreposicao e normal e proposital (zerado+platinado, free+online...);
         # a hierarquia resolve e nao ha nada a corrigir no Steam
         rel.info("A hierarquia decidiu:")
@@ -215,17 +215,17 @@ def executar(op, appids, listas, steam_path, grid_dir, universo_completo,
         pasta_manual = BASE_DIR / MANUAL_DIR_NAME
         rel.info("\n" + "-" * 60)
         if feias:
-            rel.info("Estes nao tem capa vertical oficial. A capa foi GERADA a partir")
+            rel.info("Estes não têm capa vertical oficial. A capa foi GERADA a partir")
             rel.info("da arte horizontal e provavelmente ficou feia:")
             for a in feias:
                 rel.info(f"  {a}   https://store.steampowered.com/app/{a}/")
         if sem_capa:
-            rel.info("Estes nao renderam imagem nenhuma:")
+            rel.info("Estes não renderam imagem nenhuma:")
             for a in sem_capa:
                 rel.info(f"  {a}   https://store.steampowered.com/app/{a}/")
         rel.info(f"\nPra resolver: baixe uma capa 600x900 (steamgriddb.com tem quase tudo),")
         rel.info(f"salve como <appid>.png em  {pasta_manual}")
-        rel.info(f"e rode de novo. Ou use --sgdb-key pra buscar automatico.")
+        rel.info(f"e rode de novo. Ou use --sgdb-key pra buscar automático.")
         rel.info("-" * 60)
     if op.dry_run:
         rel.info(f"Confira {destino_dir} e rode sem --dry-run quando gostar do resultado.")

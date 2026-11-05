@@ -86,11 +86,11 @@ def aplicar_family(listas, args, steam_path, user_id, badges_dir, config):
         listas = family_automatico(listas, fam, badges_dir, config)
         for l in listas:
             if l["nome"] == "family":
-                l["origens"] = ["Colecao do Steam + appmanifest"]
-        print(f"Family Share: {len(fam)} jogos, da sua Colecao de Family.")
+                l["origens"] = ["Coleção do Steam + appmanifest"]
+        print(f"Family Share: {len(fam)} jogos, da sua Coleção de Family.")
         novos = len(fam - da_colecao)
         if novos:
-            print(f"  (+{novos} que o appmanifest confirmou e a colecao nao tinha)")
+            print(f"  (+{novos} que o appmanifest confirmou e a coleção não tinha)")
         print("")
         return listas
 
@@ -99,21 +99,21 @@ def aplicar_family(listas, args, steam_path, user_id, badges_dir, config):
     try:
         fam, motivo, diag = detectar_family(steam_path, user_id, caminho, metodo)
     except ErroCore as e:
-        print(f"[!] Family Share: {e}\n    Seguindo com o que vier das Colecoes.\n")
+        print(f"[!] Family Share: {e}\n    Seguindo com o que vier das Coleções.\n")
         return listas
 
     if not fam:
-        print(f"[!] Family Share nao detectado: {motivo}")
-        print("    Seguindo com o que vier das Colecoes.\n")
+        print(f"[!] Family Share não detectado: {motivo}")
+        print("    Seguindo com o que vier das Coleções.\n")
         return listas
 
     listas = family_automatico(listas, fam, badges_dir, config)
     print(f"Family Share: {len(fam)} jogos deduzidos.")
     for linha in resumo_family(diag):
         print(f"  {linha}")
-    print("  [!] a deducao e incompleta. A lista completa de emprestados nao")
+    print("  [!] a dedução e incompleta. A lista completa de emprestados não")
     print("      existe em disco: a Steam a serve do servidor. O jeito certo e")
-    print("      criar uma Colecao a partir da aba STEAM FAMILY da biblioteca")
+    print("      criar uma Coleção a partir da aba STEAM FAMILY da biblioteca")
     print("      e mapea-la pra 'family' no config.json. Veja o README.")
     print("")
     return listas
@@ -133,7 +133,7 @@ def main():
     ap = argparse.ArgumentParser(
         description="Aplica um badge PNG sobre as capas da biblioteca Steam.")
     ap.add_argument("--badges", default=BADGES_DIR_NAME,
-                    help=f"pasta com os PNG dos badges (padrao: {BADGES_DIR_NAME}/)")
+                    help=f"pasta com os PNG dos badges (padrão: {BADGES_DIR_NAME}/)")
     ap.add_argument("--moldura", action="store_true",
                     help="monta as capas no formato caixa (molduras/)")
     ap.add_argument("--diag-auto", metavar="APPIDS",
@@ -141,9 +141,9 @@ def main():
     ap.add_argument("--forcar-auto", metavar="APPIDS",
                     help="trata estes appids como capa fabricada, mesmo sem a API confirmar")
     ap.add_argument("--todos", action="store_true",
-                    help="emoldura a biblioteca inteira; badge so em quem tem colecao")
+                    help="emoldura a biblioteca inteira; badge só em quem tem coleção")
     ap.add_argument("--limpar-sobras", action="store_true",
-                    help="remove do grid as capas verticais que nao foram feitas por nos")
+                    help="remove do grid as capas verticais que não foram feitas por nos")
     ap.add_argument("--trocar-auto", action="store_true",
                     help="troca capas que a Steam fabricou do header por arte da SteamGridDB")
     ap.add_argument("--so-auto", action="store_true",
@@ -151,30 +151,30 @@ def main():
     ap.add_argument("--sem-moldura", action="store_true",
                     help="ignora \"moldura\": true do config e usa badge solto")
     ap.add_argument("--colecoes", action="store_true",
-                    help="aceito por compatibilidade; as Colecoes ja sao a unica fonte")
+                    help="aceito por compatibilidade; as Coleções já são a única fonte")
     ap.add_argument("--listar-colecoes", action="store_true",
-                    help="mostra as Colecoes do Steam encontradas e sai")
+                    help="mostra as Coleções do Steam encontradas e sai")
     ap.add_argument("--userdata", metavar="ARQUIVO",
                     help="userdata.json da loja, para detectar Family Share "
-                         "(padrao: procura nesta pasta, em Downloads e na Area de Trabalho)")
+                         "(padrão: procura nesta pasta, em Downloads e na Área de Trabalho)")
     ap.add_argument("--sem-family", action="store_true",
-                    help="nao detecta Family Share; usa so o que vier das Colecoes")
+                    help="não detecta Family Share; usa só o que vier das Coleções")
     ap.add_argument("--family-metodo", choices=("auto", "cruzado", "subtracao", "membros"),
                     default="auto",
                     help="como detectar Family Share: auto usa o cache local "
-                         "dos membros mais o appmanifest; subtracao usa a lista "
-                         "da loja (medido em 6% de acerto, nao recomendado)")
+                         "dos membros mais o appmanifest; subtração usa a lista "
+                         "da loja (medido em 6% de acerto, não recomendado)")
     ap.add_argument("--listar-family", action="store_true",
                     help="mostra os jogos detectados como emprestados e sai")
     ap.add_argument("--conferir-family", action="store_true",
-                    help="mede a deteccao contra os jogos instalados, onde o "
+                    help="mede a detecção contra os jogos instalados, onde o "
                          "appmanifest da a resposta exata")
     ap.add_argument("--comparar-family", action="store_true",
                     help="mede varias formas de deduzir Family Share contra o "
                          "mesmo gabarito, pra escolher a certa")
     ap.add_argument("--config", default="config.json", help="config opcional: hierarquia e ajustes por lista")
     ap.add_argument("--dry-run", action="store_true",
-                    help="nao toca no Steam; salva os resultados em ./preview/")
+                    help="não toca no Steam; salva os resultados em ./preview/")
     ap.add_argument("--out", default="preview", help="pasta do --dry-run")
     ap.add_argument("--pos", default=None, choices=CORNERS,
                     help="canto: br=inferior dir, bl=inferior esq, tr=superior dir, tl=superior esq")
@@ -182,8 +182,8 @@ def main():
     ap.add_argument("--margin", type=float, default=None, help="margem da borda (fracao da largura)")
     ap.add_argument("--opacity", type=float, default=None, help="opacidade do badge (0.0 a 1.0)")
     ap.add_argument("--sgdb-key", default=os.environ.get("SGDB_KEY"),
-                    help="chave da API do SteamGridDB (ou variavel SGDB_KEY)")
-    ap.add_argument("--only", help="processa so estes appids, separados por virgula")
+                    help="chave da API do SteamGridDB (ou variável SGDB_KEY)")
+    ap.add_argument("--only", help="processa só estes appids, separados por virgula")
     ap.add_argument("--force", action="store_true",
                     help="rebaixa a capa original ignorando o backup")
     ap.add_argument("--restore", action="store_true", help="desfaz: remove os badges aplicados")
@@ -192,18 +192,18 @@ def main():
     ap.add_argument("--testar-sgdb", metavar="APPID",
                     help="diagnostico: consulta a SteamGridDB para um appid e sai")
     ap.add_argument("--auditar", action="store_true",
-                    help="so mede a qualidade das capas e lista as fracas, sem alterar nada")
+                    help="só mede a qualidade das capas e lista as fracas, sem alterar nada")
     ap.add_argument("--melhorar", action="store_true",
                     help="troca capas fracas por versoes da SteamGridDB (precisa de chave)")
     ap.add_argument("--exigir-ganho", action="store_true",
-                    help="so troca se a nova capa tiver nitidez maior (estrito)")
+                    help="só troca se a nova capa tiver nitidez maior (estrito)")
     ap.add_argument("--variante", type=int, default=0,
                     help="pula as N primeiras artes da SteamGridDB (0 = a melhor)")
     ap.add_argument("--limiar", type=float, default=0.45,
-                    help="abaixo disso a capa e considerada fraca (padrao: 0.45)")
+                    help="abaixo disso a capa e considerada fraca (padrão: 0.45)")
     ap.add_argument("--reset-backups", action="store_true",
                     help="apaga originais/ para rebaixar todas as capas do zero")
-    ap.add_argument("--steam-path", help="caminho do Steam, se a deteccao falhar")
+    ap.add_argument("--steam-path", help="caminho do Steam, se a detecção falhar")
     ap.add_argument("--user", help="steamID3 (nome da pasta em userdata/) se tiver varias contas")
     args = ap.parse_args()
     args.pos_set = args.pos is not None
@@ -233,15 +233,15 @@ def main():
             elif auto:
                 veredito = "fabricada do header"
             else:
-                veredito = "capa propria"
-            print(f"{a:>9}  {veredito:<22} {nome or '(a API nao devolveu assets)'}")
+                veredito = "capa própria"
+            print(f"{a:>9}  {veredito:<22} {nome or '(a API não devolveu assets)'}")
         if desconhecidos:
             print("\n" + "-" * 72)
-            print("DESCONHECIDO quer dizer que a API nao tem assets para o jogo -")
-            print("tipicamente jogos removidos da loja, que perderam a pagina.")
-            print("Nesses casos a deteccao nao tem como funcionar. Para tratar")
+            print("DESCONHECIDO quer dizer que a API não tem assets para o jogo -")
+            print("tipicamente jogos removidos da loja, que perderam a página.")
+            print("Nesses casos a detecção não tem como funcionar. Para tratar")
             print("mesmo assim como capa fabricada:")
-            print(f"  {_comando()} --todos --so-auto \\")
+            print(f"  {_comando()} --todos --só-auto \\")
             print(f"      --forcar-auto {','.join(map(str, desconhecidos))}")
         return
 
@@ -256,11 +256,11 @@ def main():
             if base.isdigit() and int(base) not in nossos:
                 sobras.append(f)
         if not sobras:
-            print("Nenhuma sobra: todas as capas verticais do grid sao nossas.")
+            print("Nenhuma sobra: todas as capas verticais do grid são nossas.")
             return
-        print(f"{len(sobras)} capa(s) vertical(is) no grid nao foram feitas por nos.")
+        print(f"{len(sobras)} capa(s) vertical(is) no grid não foram feitas por nos.")
         print("Removidas, a Steam volta a usar a arte oficial de cada jogo.")
-        print("Hero, logo, icone e banner horizontal NAO sao tocados.\n")
+        print("Hero, logo, ícone e banner horizontal NÃO são tocados.\n")
         for f in sobras[:12]:
             print(f"  {f.name}")
         if len(sobras) > 12:
@@ -284,18 +284,18 @@ def main():
         for a in avisos:
             print(f"[!] {a}")
         if not colecoes:
-            print("\nNenhuma colecao encontrada. Feche o Steam e tente de novo:")
-            print("ele so grava o arquivo de colecoes ao sincronizar/sair.")
+            print("\nNenhuma coleção encontrada. Feche o Steam e tente de novo:")
+            print("ele só grava o arquivo de coleções ao sincronizar/sair.")
             return
 
-        print(f"{'colecao':<24} {'nome de lista':<18} jogos")
+        print(f"{'coleção':<24} {'nome de lista':<18} jogos")
         print("-" * 52)
         for c in colecoes:
-            marca = "  (dinamica, ignorada)" if c["dinamica"] else ""
+            marca = "  (dinâmica, ignorada)" if c["dinamica"] else ""
             print(f"{c['nome'][:23]:<24} {c['slug'][:21]:<22} "
                   f"{len(c['appids']):>5}{marca}")
 
-        print(f"\nPara usar: {_comando()}          (le as Colecoes direto)")
+        print(f"\nPara usar: {_comando()}          (le as Coleções direto)")
         return
 
     if args.comparar_family:
@@ -308,7 +308,7 @@ def main():
         caminho = Path(args.userdata) if args.userdata else achar_userdata_json()
         metodo = "auto" if args.family_metodo == "cruzado" else args.family_metodo
         fam, linhas = conferir_family(steam_path, user_id, caminho, metodo)
-        print(f"Deteccao: {len(fam)} jogos\n")
+        print(f"Detecção: {len(fam)} jogos\n")
         for l in linhas:
             print(l)
         return
@@ -319,7 +319,7 @@ def main():
         if caminho:
             print(f"Lista de propriedade: {caminho}")
         else:
-            print("Sem userdata.json: uso so o cache local dos membros.")
+            print("Sem userdata.json: uso só o cache local dos membros.")
         grupo, membros = grupo_family(steam_path, user_id)
         if grupo:
             print(f"Steam Family: grupo {grupo}, {len(membros)} membros")
@@ -329,7 +329,7 @@ def main():
             print(f"  {linha}")
         print("")
         if not fam:
-            print(f"Nao da pra determinar: {motivo}")
+            print(f"Não da pra determinar: {motivo}")
             return
         nomes = carregar_assets(sorted(fam)[:60]) or {}
         print(f"{len(fam)} jogos vieram por Family Share:\n")
@@ -340,7 +340,7 @@ def main():
         if len(fam) > 60:
             print(f"  ... e mais {len(fam) - 60}")
         print("\nEstes recebem o canto verde. Jogo seu que aparecer aqui quer")
-        print("dizer que a lista de propriedade esta velha: baixe de novo.")
+        print("dizer que a lista de propriedade está velha: baixe de novo.")
         return
 
     if args.restore:
@@ -386,8 +386,8 @@ def main():
             print(f"\n   TROCARIA: {nitidez:.2f} -> {nova:.2f}")
             print(f"   Rode: {_comando()} --melhorar --only {appid}")
         else:
-            print("\n   NAO trocaria: nenhuma arte utilizavel voltou.")
-            print(f"   Se voce discorda, baixe a que quiser de")
+            print("\n   NÃO trocaria: nenhuma arte utilizavel voltou.")
+            print(f"   Se você discorda, baixe a que quiser de")
             print(f"   https://www.steamgriddb.com/steam/{appid}/grids")
             print(f"   e salve como capas/{appid}.png")
         return
@@ -396,9 +396,9 @@ def main():
         if BACKUP_DIR.exists():
             n = len(list(BACKUP_DIR.glob("*")))
             shutil.rmtree(BACKUP_DIR)
-            print(f"originais/ apagada ({n} arquivos). As capas serao rebaixadas.")
+            print(f"originais/ apagada ({n} arquivos). As capas serão rebaixadas.")
         else:
-            print("originais/ nao existe, nada a fazer.")
+            print("originais/ não existe, nada a fazer.")
         print("Rode o script normalmente agora.")
         return
 
@@ -417,7 +417,7 @@ def main():
         args.sgdb_key = args.sgdb_key.strip().strip('"').strip("'")
         ok, msg = validar_chave_sgdb(args.sgdb_key)
         if not ok:
-            print(f"[!] Chave da SteamGridDB nao funciona.\n  {msg}")
+            print(f"[!] Chave da SteamGridDB não funciona.\n  {msg}")
             if args.melhorar or args.testar_sgdb:
                 sys.exit(1)
             print("[!] Seguindo sem a SteamGridDB.\n")
@@ -433,8 +433,8 @@ def main():
 
     if not listas:
         sys.exit("Nenhuma lista utilizavel.\n"
-                 "Mapeie suas Colecoes em config.json -> \"colecoes\" e\n"
-                 f"coloque o icone de cada uma em {badges_dir.name}/<nome>.png.")
+                 "Mapeie suas Coleções em config.json -> \"coleções\" e\n"
+                 f"coloque o ícone de cada uma em {badges_dir.name}/<nome>.png.")
 
     # overrides globais da linha de comando valem pra todas as listas
     for l in listas:
@@ -482,7 +482,7 @@ def main():
                 universo.add(int(f.stem[:-1]))
         extras = len(universo) - len(appids)
         appids = sorted(universo)
-        print(f"Modo --todos: {len(appids)} jogos ({extras} sem badge, so moldura).\n")
+        print(f"Modo --todos: {len(appids)} jogos ({extras} sem badge, só moldura).\n")
 
     # O universo e definido aqui, antes de --so-auto ou --only estreitarem a
     # lista. A limpeza de orfaos precisa dele: sem isso, uma execucao
@@ -496,7 +496,7 @@ def main():
 
     if args.auditar:
         ja_aplicados = set(load_state().get("aplicados", []))
-        print("Medindo qualidade das capas. Nada sera alterado.\n")
+        print("Medindo qualidade das capas. Nada será alterado.\n")
         placar = []
         for i, appid in enumerate(appids, 1):
             base, origem = get_base_cover(appid, steam_path, grid_dir,
@@ -523,10 +523,10 @@ def main():
         print(f"{len(fracas)} de {len(placar)} abaixo do limiar {args.limiar}.")
         if fracas:
             print("\nCUIDADO: a metrica confunde 'header colado' com capa")
-            print("minimalista legitima. Confira as capas antes de trocar:")
+            print("minimalista legítima. Confira as capas antes de trocar:")
             for a in fracas[:15]:
                 print(f"  https://www.steamgriddb.com/steam/{a}/grids")
-            print(f"\nPra trocar so as que voce aprovou:")
+            print(f"\nPra trocar só as que você aprovou:")
             print(f"  {_comando()} --melhorar --only {','.join(map(str, fracas[:5]))}")
         return
 

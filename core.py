@@ -30,7 +30,7 @@ from pathlib import Path
 try:
     from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageStat
 except ImportError:                      # quem importa o core decide o que fazer
-    raise ImportError("Pillow nao encontrado. Rode:  pip install Pillow")
+    raise ImportError("Pillow não encontrado. Rode:  pip install Pillow")
 
 def _base_dir():
     """
@@ -147,7 +147,7 @@ def find_steam_path(override=None):
     if override:
         p = Path(override).expanduser()
         if not (p / "userdata").is_dir():
-            raise ErroCore(f"'{p}' nao parece a pasta do Steam (nao tem 'userdata/').")
+            raise ErroCore(f"'{p}' não parece a pasta do Steam (não tem 'userdata/').")
         return p.resolve()
 
     candidates = []
@@ -173,15 +173,21 @@ def find_steam_path(override=None):
     elif system == "Darwin":
         candidates.append(Path.home() / "Library/Application Support/Steam")
     else:
+        # no Steam Deck vale a primeira: ~/.steam/steam e um link pra
+        # ~/.local/share/Steam. As outras cobrem o pacote .deb, o Flatpak
+        # e instalacoes antigas.
         candidates += [Path.home() / ".steam/steam",
+                       Path.home() / ".steam/root",
                        Path.home() / ".local/share/Steam",
-                       Path.home() / ".var/app/com.valvesoftware.Steam/data/Steam"]
+                       Path.home() / ".steam/debian-installation",
+                       Path.home() / ".var/app/com.valvesoftware.Steam/data/Steam",
+                       Path.home() / ".var/app/com.valvesoftware.Steam/.local/share/Steam"]
 
     for c in candidates:
         if (c / "userdata").is_dir():
             return c.resolve()
 
-    raise ErroCore("Nao achei o Steam. Passe o caminho manualmente com --steam-path")
+    raise ErroCore("Não achei o Steam. Passe o caminho manualmente com --steam-path")
 
 
 def find_grid_dir(steam_path, user_id=None):
@@ -189,12 +195,12 @@ def find_grid_dir(steam_path, user_id=None):
     userdata = steam_path / "userdata"
     users = [d for d in userdata.iterdir() if d.is_dir() and d.name.isdigit() and d.name != "0"]
     if not users:
-        raise ErroCore(f"Nenhum usuario encontrado em {userdata}")
+        raise ErroCore(f"Nenhum usuário encontrado em {userdata}")
 
     if user_id:
         chosen = userdata / str(user_id)
         if not chosen.is_dir():
-            raise ErroCore(f"Usuario {user_id} nao existe. Disponiveis: {[u.name for u in users]}")
+            raise ErroCore(f"Usuário {user_id} não existe. Disponiveis: {[u.name for u in users]}")
     elif len(users) == 1:
         chosen = users[0]
     else:
@@ -224,7 +230,7 @@ def http_get(url, timeout=20, headers=None):
     req = urllib.request.Request(url, headers=h)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         if r.status != 200:
-            raise urllib.error.HTTPError(url, r.status, "nao ok", r.headers, None)
+            raise urllib.error.HTTPError(url, r.status, "não ok", r.headers, None)
         return r.read()
 
 
@@ -385,10 +391,10 @@ def sgdb_buscar_grids(appid, api_key, dimensoes=SGDB_DIMENSOES, verbose=False):
         bruto = http_get(url, timeout=15,
                          headers={"Authorization": f"Bearer {api_key}"})
     except urllib.error.HTTPError as e:
-        motivos = {401: "chave invalida ou expirada",
-                   403: "chave sem permissao",
-                   404: "jogo nao encontrado na SteamGridDB",
-                   429: "limite de requisicoes atingido"}
+        motivos = {401: "chave inválida ou expirada",
+                   403: "chave sem permissão",
+                   404: "jogo não encontrado na SteamGridDB",
+                   429: "limite de requisições atingido"}
         return [], f"HTTP {e.code}: {motivos.get(e.code, e.reason)}"
     except Exception as e:
         return [], f"falha de rede: {e}"
@@ -414,7 +420,7 @@ def url_capa_steamgriddb(appid, api_key, verbose=False):
     # Filtro estreito nao achou nada: tenta de novo sem restricao de tamanho.
     if not itens:
         if verbose and erro:
-            _rel.detalhe(f"    filtro padrao: {erro} - tentando sem filtro de dimensao")
+            _rel.detalhe(f"    filtro padrão: {erro} - tentando sem filtro de dimensao")
         itens, erro = sgdb_buscar_grids(appid, api_key, dimensoes=None,
                                         verbose=verbose)
 
@@ -503,7 +509,7 @@ def validar_chave_sgdb(api_key):
 
     chave = api_key.strip()
     if chave != api_key:
-        return False, "a chave tem espaco ou quebra de linha nas pontas"
+        return False, "a chave tem espaço ou quebra de linha nas pontas"
 
     # 440 = Team Fortress 2, sempre existe na base.
     try:
@@ -515,7 +521,7 @@ def validar_chave_sgdb(api_key):
             return False, (
                 f"HTTP {e.code}: a SteamGridDB recusou a chave.\n"
                 "  Gere uma nova em https://www.steamgriddb.com/profile/preferences/api\n"
-                "  Se voce regerou a chave recentemente, a anterior foi invalidada."
+                "  Se você regerou a chave recentemente, a anterior foi invalidada."
             )
         if e.code == 404:
             return True, "ok"   # chave passou, so o jogo de teste que faltou
@@ -557,7 +563,7 @@ def buscar_capa_melhor(appid, sgdb_key, nitidez_atual, verbose=False,
                     _rel.detalhe(f"      {Image.open(io.BytesIO(dados)).size} rejeitada: "
                           f"proporcao fora de {RATIO_MIN}-{RATIO_MAX}")
                 except Exception:
-                    _rel.detalhe("      rejeitada: nao e imagem valida")
+                    _rel.detalhe("      rejeitada: não e imagem valida")
             continue
 
         nova = analisar_nitidez(dados)
@@ -754,7 +760,7 @@ def _buscar_capa_base(appid, steam_path, grid_dir, force, sgdb_key, escrito_por_
             for outro in (".png", ".jpeg"):
                 (BACKUP_DIR / f"{appid}{outro}").unlink(missing_ok=True)
             (BACKUP_DIR / f"{appid}.sgdb").touch()   # nao rebaixar na proxima
-            return destino, "SteamGridDB (trocou arte automatica)"
+            return destino, "SteamGridDB (trocou arte automática)"
 
     # 4. Cache local do Steam. Se a arte e fabricada, o cache tem a mesma
     #    imagem borrada: so serve se a SteamGridDB nao tiver alternativa.
@@ -923,7 +929,7 @@ def ler_colecoes(steam_path, user_id):
             try:
                 val = json.loads(bruto) if isinstance(bruto, str) else bruto
             except Exception:
-                avisos.append(f"{chave}: value nao e JSON valido")
+                avisos.append(f"{chave}: value não é JSON válido")
                 continue
 
             cid = val.get("id") or chave.split(".", 1)[1]
@@ -972,19 +978,19 @@ def ler_colecoes(steam_path, user_id):
 # expandir os pacotes esses jogos seriam acusados de emprestados. A
 # expansao sai de appcache/packageinfo.vdf, mantido pelo proprio cliente.
 #
-# Quando qualquer peca falta, a resposta e "nao sei" - nunca um chute.
+# Quando qualquer peca falta, a resposta e "não sei" - nunca um chute.
 # Marcar um jogo seu como emprestado e pior do que nao marcar nada.
 
 URL_USERDATA = "https://store.steampowered.com/dynamicstore/userdata/"
 
 COMO_BAIXAR_USERDATA = (
-    "Para detectar Family Share eu preciso saber o que e seu, e isso nao\n"
-    "fica em disco. Faca uma vez:\n"
+    "Para detectar Family Share eu preciso saber o que e seu, e isso não\n"
+    "fica em disco. Faça uma vez:\n"
     f"  1. abra {URL_USERDATA}\n"
-    "     no navegador em que voce usa a Steam (logado);\n"
-    "  2. salve a pagina como userdata.json (Ctrl+S);\n"
+    "     no navegador em que você usa a Steam (logado);\n"
+    "  2. salve a página como userdata.json (Ctrl+S);\n"
     "  3. ponha o arquivo nesta pasta, ou passe --userdata CAMINHO.\n"
-    "Refaca quando comprar jogos novos. O arquivo nao sai da sua maquina."
+    "Refaça quando comprar jogos novos. O arquivo não sai da sua máquina."
 )
 
 # packageinfo.vdf comeca com uma destas assinaturas. O valor e quantos
@@ -1014,7 +1020,7 @@ def _kv_binario(dados, pos, prof=0):
     porque seguir lendo um arquivo que eu nao entendo da lixo silencioso.
     """
     if prof > 8:
-        raise ValueError("arvore fundo demais")
+        raise ValueError("árvore fundo demais")
     arvore = {}
     while True:
         tipo = dados[pos]
@@ -1113,28 +1119,28 @@ def ler_userdata_loja(caminho):
     """
     caminho = Path(caminho)
     if not caminho.is_file():
-        raise ErroCore(f"Nao achei {caminho}.\n\n{COMO_BAIXAR_USERDATA}")
+        raise ErroCore(f"Não achei {caminho}.\n\n{COMO_BAIXAR_USERDATA}")
     if caminho.stat().st_size > _USERDATA_TAM_MAX:
         raise ErroCore(f"{caminho.name} tem "
                        f"{caminho.stat().st_size >> 20} MB - grande demais "
-                       f"para ser a lista da loja. Salvou a pagina errada?")
+                       f"para ser a lista da loja. Salvou a página errada?")
     try:
         bruto = json.loads(caminho.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError) as e:
-        raise ErroCore(f"Nao consegui ler {caminho.name} como JSON "
+        raise ErroCore(f"Não consegui ler {caminho.name} como JSON "
                        f"({type(e).__name__}). Provavelmente o navegador "
-                       f"salvou a pagina como HTML em vez do JSON cru.\n\n"
+                       f"salvou a página como HTML em vez do JSON cru.\n\n"
                        f"{COMO_BAIXAR_USERDATA}")
     if not isinstance(bruto, dict):
-        raise ErroCore(f"{caminho.name} nao tem a forma da lista da loja.\n\n"
+        raise ErroCore(f"{caminho.name} não tem a forma da lista da loja.\n\n"
                        f"{COMO_BAIXAR_USERDATA}")
     apps = _inteiros(bruto.get("rgOwnedApps"))
     pacotes = _inteiros(bruto.get("rgOwnedPackages"))
     if not apps and not pacotes:
         raise ErroCore(
             f"{caminho.name} veio sem jogos nem pacotes. Isso quer dizer que "
-            f"voce nao estava logado na Steam no navegador quando salvou.\n"
-            f"Abra {URL_USERDATA}, faca login, de F5 e salve de novo.")
+            f"você não estava logado na Steam no navegador quando salvou.\n"
+            f"Abra {URL_USERDATA}, faça login, de F5 e salve de novo.")
     return apps, pacotes
 
 
@@ -1174,8 +1180,8 @@ def biblioteca_do_cache(steam_path):
 #   WebStorage > FriendsOwnedGames_storage_<accountid>
 #       {"version":1,"data":{"setApps":[appid,...]},"lastFetchTimeMS":ms}
 #
-# Isso e um sinal POSITIVO: "este jogo pertence a um membro da familia".
-# A subtracao do userdata.json e um sinal NEGATIVO: "este jogo nao e seu".
+# Isso e um sinal POSITIVO: "este jogo pertence a um membro da família".
+# A subtracao do userdata.json e um sinal NEGATIVO: "este jogo não e seu".
 # Os dois erram em direcoes opostas, entao cruzar os dois e melhor que
 # qualquer um sozinho. Veja detectar_family().
 
@@ -1411,7 +1417,7 @@ def detectar_family(steam_path, user_id, caminho_userdata=None, metodo="auto",
     conhecidos = biblioteca_do_cache(steam_path)
     diag["conhecidos"] = len(conhecidos)
     if not conhecidos:
-        return set(), ("appcache/librarycache esta vazio. Abra a biblioteca "
+        return set(), ("appcache/librarycache está vazio. Abra a biblioteca "
                        "no cliente uma vez para ele baixar as capas."), diag
 
     # --- sinal positivo: cache dos membros --------------------------------
@@ -1511,51 +1517,51 @@ def conferir_family(steam_path, user_id, caminho_userdata=None, metodo="auto"):
                                        metodo, usar_exatos=True)
     linhas = []
     if not reais and not meus:
-        linhas.append("Nenhum jogo instalado: nao da pra conferir nada.")
+        linhas.append("Nenhum jogo instalado: não da pra conferir nada.")
         return final, linhas
 
     linhas.append(f"Gabarito: os {len(reais) + len(meus)} jogos instalados.")
     linhas.append("O appmanifest com SharedDepots diz quem e emprestado sem")
-    linhas.append("margem de duvida. A deducao abaixo roda SEM olhar pra ele,")
-    linhas.append("senao a conta seria circular.")
+    linhas.append("margem de dúvida. A dedução abaixo roda SEM olhar pra ele,")
+    linhas.append("senão a conta seria circular.")
     linhas.append("")
 
     if reais:
         pegos = reais & cego
         pct = 100 * len(pegos) // len(reais)
         linhas.append(f"  emprestados instalados    : {len(reais)}")
-        linhas.append(f"  a deducao sozinha pegou   : {len(pegos)} ({pct}%)")
+        linhas.append(f"  a dedução sozinha pegou   : {len(pegos)} ({pct}%)")
         perdidos = sorted(reais - cego)
         if perdidos:
             linhas.append(f"  PERDEU {len(perdidos)}: "
                           f"{', '.join(str(a) for a in perdidos[:20])}"
                           f"{'...' if len(perdidos) > 20 else ''}")
             linhas.append("    (no resultado final estes entram pelo appmanifest,")
-            linhas.append("     mas um emprestado NAO instalado assim escaparia)")
+            linhas.append("     mas um emprestado NÃO instalado assim escaparia)")
     if meus:
         falsos = sorted(meus & cego)
         linhas.append(f"  seus instalados           : {len(meus)}")
-        linhas.append(f"  a deducao marcou a toa    : {len(falsos)}")
+        linhas.append(f"  a dedução marcou a toa    : {len(falsos)}")
         if falsos:
             linhas.append(f"  FALSO POSITIVO: "
                           f"{', '.join(str(a) for a in falsos[:20])}"
                           f"{'...' if len(falsos) > 20 else ''}")
 
     linhas.append("")
-    linhas.append(f"  deducao sozinha : {len(cego)} jogos")
+    linhas.append(f"  dedução sozinha : {len(cego)} jogos")
     linhas.append(f"  resultado final : {len(final)} jogos "
-                  f"(deducao + appmanifest)")
+                  f"(dedução + appmanifest)")
     if reais and len(reais & cego) < len(reais):
         falta = len(reais) - len(reais & cego)
         linhas.append("")
-        linhas.append(f"  A deducao perde {falta} de {len(reais)} nos instalados. "
+        linhas.append(f"  A dedução perde {falta} de {len(reais)} nos instalados. "
                       f"Na mesma proporcao,")
-        linhas.append(f"  ela perderia jogos emprestados que voce NAO tem "
+        linhas.append(f"  ela perderia jogos emprestados que você NÃO tem "
                       f"instalados - e esses")
-        linhas.append(f"  o appmanifest nao resgata.")
+        linhas.append(f"  o appmanifest não resgata.")
     if motivo:
         linhas.append("")
-        linhas.append(f"  (deteccao vazia: {motivo})")
+        linhas.append(f"  (detecção vazia: {motivo})")
     return final, linhas
 
 
@@ -1624,18 +1630,18 @@ def comparar_family(steam_path, user_id, caminho_userdata=None):
     linhas.append("")
     if apps_loja is not None and reais:
         dentro = len(reais & apps_loja)
-        linhas.append(f"  Dos {len(reais)} emprestados instalados, {dentro} estao "
+        linhas.append(f"  Dos {len(reais)} emprestados instalados, {dentro} estão "
                       f"em rgOwnedApps.")
         if dentro > len(reais) * 0.5:
             linhas.append("  >>> rgOwnedApps INCLUI o que te emprestaram: ele diz")
-            linhas.append("      'pode jogar', nao 'e seu'. Subtrai-lo apaga o alvo.")
+            linhas.append("      'pode jogar', não 'e seu'. Subtrai-lo apaga o alvo.")
     if pacotes_loja is not None and reais:
         dentro = len(reais & pacotes_loja)
-        linhas.append(f"  Dos {len(reais)} emprestados instalados, {dentro} estao "
+        linhas.append(f"  Dos {len(reais)} emprestados instalados, {dentro} estão "
                       f"nos seus pacotes.")
         if dentro == 0:
-            linhas.append("  >>> rgOwnedPackages NAO inclui emprestado: e o sinal")
-            linhas.append("      de posse confiavel.")
+            linhas.append("  >>> rgOwnedPackages NÃO inclui emprestado: e o sinal")
+            linhas.append("      de posse confiável.")
     if ws.get("sem_cache"):
         linhas.append("")
         linhas.append(f"  [!] membros sem cache: "
@@ -1645,24 +1651,24 @@ def comparar_family(steam_path, user_id, caminho_userdata=None):
 
 def _porque_sem_subtracao(caminho, diag):
     if not caminho:
-        return ("sem o userdata.json eu nao sei o que e seu. "
+        return ("sem o userdata.json eu não sei o que e seu. "
                 f"{COMO_BAIXAR_USERDATA}")
     if diag.get("pacotes_falhou"):
-        return ("nao consegui expandir seus pacotes. O "
-                "appcache/packageinfo.vdf esta ausente, num formato que eu "
-                "nao conheco, ou e de outra conta. Sem ele, jogo gratuito e "
-                "de bundle seria acusado de emprestado, entao prefiro nao "
+        return ("não consegui expandir seus pacotes. O "
+                "appcache/packageinfo.vdf está ausente, num formato que eu "
+                "não conheco, ou e de outra conta. Sem ele, jogo gratuito e "
+                "de bundle seria acusado de emprestado, então prefiro não "
                 "marcar nada.")
-    return "a subtracao nao deu resultado."
+    return "a subtração não deu resultado."
 
 
 def _porque_sem_membros(diag):
     ws = diag.get("ws") or {}
     if not ws.get("grupo"):
-        return ("este Steam nao tem uma Steam Family configurada nesta conta "
-                "(nao achei FamilyGroup no localconfig.vdf).")
+        return ("este Steam não tem uma Steam Family configurada nesta conta "
+                "(não achei FamilyGroup no localconfig.vdf).")
     if not ws.get("indice"):
-        return ("a Family existe, mas o cliente ainda nao cacheou a "
+        return ("a Family existe, mas o cliente ainda não cacheou a "
                 "biblioteca de nenhum membro. Abra a aba STEAM FAMILY na "
                 "biblioteca uma vez e feche o Steam.")
     return "o cache dos membros veio vazio."
@@ -1674,14 +1680,14 @@ def resumo_family(diag):
     linhas = []
     ws = diag.get("ws") or {}
     met = {"cruzado": "cruzamento dos dois sinais",
-           "subtracao": "subtracao pela lista da loja (6% de acerto medido)",
-           "appmanifest": "so os instalados, pelo appmanifest",
+           "subtracao": "subtração pela lista da loja (6% de acerto medido)",
+           "appmanifest": "só os instalados, pelo appmanifest",
            "membros": "cache local dos membros + appmanifest"}.get(
                diag.get("metodo"), "?")
     linhas.append(f"metodo: {met}")
     linhas.append(f"  biblioteca que o cliente conhece: {diag['conhecidos']}")
     if diag.get("subtracao") is not None:
-        linhas.append(f"  nao e seu (subtracao):           {diag['subtracao']}")
+        linhas.append(f"  não e seu (subtração):           {diag['subtracao']}")
     if diag.get("membros") is not None:
         linhas.append(f"  e de um membro (cache local):    {diag['membros']}")
     for conta, (n, ts) in sorted((ws.get("por_membro") or {}).items()):
@@ -1700,7 +1706,7 @@ def resumo_family(diag):
     if ws.get("sem_cache"):
         linhas.append(f"  [!] membros SEM cache: "
                       f"{', '.join(str(x) for x in ws['sem_cache'])}")
-        linhas.append("      jogos emprestados so por eles podem escapar.")
+        linhas.append("      jogos emprestados só por eles podem escapar.")
     return linhas
 
 
@@ -1731,8 +1737,8 @@ def family_automatico(listas, appids, badges_dir, config):
 
     badge = achar_badge(badges_dir, nome)
     if badge is None:
-        _rel.aviso(f"[!] {badges_dir.name}/{nome}.png nao existe: "
-                   f"o canto de Family Share nao sera desenhado.")
+        _rel.aviso(f"[!] {badges_dir.name}/{nome}.png não existe: "
+                   f"o canto de Family Share não será desenhado.")
         return listas
 
     hier = [normaliza(x) for x in config.get("hierarquia", HIERARQUIA_PADRAO)]
@@ -1822,7 +1828,7 @@ def listas_das_colecoes(steam_path, user_id, badges_dir, config):
     if sem_badge:
         _rel.aviso(f"[!] Badge faltando - nem em {BADGES_DIR_NAME}/ nem em "
                    f"{ASSETS_DIR_NAME}/{BADGES_DIR_NAME}/. "
-                   "Estas colecoes ficaram de fora:")
+                   "Estas coleções ficaram de fora:")
         for nome, origens in sem_badge:
             _rel.info(f"      {badges_dir.name}/{nome}.png  <- {', '.join(origens)}")
         _rel.info("")
@@ -1832,7 +1838,7 @@ def listas_das_colecoes(steam_path, user_id, badges_dir, config):
               f"{', '.join(sorted(ignoradas)[:8])}"
               f"{'...' if len(ignoradas) > 8 else ''}")
     if dinamicas:
-        _rel.info(f"Dinamicas ({len(dinamicas)}, nao tem lista de jogos): "
+        _rel.info(f"Dinamicas ({len(dinamicas)}, não tem lista de jogos): "
               f"{', '.join(sorted(dinamicas)[:6])}"
               f"{'...' if len(dinamicas) > 6 else ''}")
     if ignoradas or dinamicas:
@@ -1966,7 +1972,7 @@ def carregar_config(caminho):
     try:
         return json.loads(caminho.read_text(encoding="utf-8-sig"))
     except Exception as e:
-        raise ErroCore(f"config.json invalido: {e}")
+        raise ErroCore(f"config.json inválido: {e}")
 
 
 def resolver_badge(appid, listas):
@@ -2100,7 +2106,7 @@ def compor_com_moldura(capa_path, camadas):
     base_nome = "case_ouro" if (caixa_l and caixa_l.get("caixa_ouro", True)) else "case"
     mold = _peca(base_nome) or _peca("case")
     if mold is None:
-        raise SteamcaseErro("molduras/case.png nao existe. "
+        raise SteamcaseErro("molduras/case.png não existe. "
                             "Rode: python tools/build_frame.py")
 
     # arte escalada para cobrir a janela, com corte centralizado

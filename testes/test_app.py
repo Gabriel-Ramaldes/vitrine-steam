@@ -106,7 +106,7 @@ def t_etapa_trancada_nao_abre(_):
     try:
         a.proximo(); a.update()
         assert a.atual == 0, "sem listas, a etapa seguinte esta trancada"
-        assert "nao esta liberada" in a.lb_estado.cget("text")
+        assert "não está liberada" in a.lb_estado.cget("text")
         # a etapa anterior volta a aparecer
         assert a._frame(0).winfo_ismapped()
         a.sessao.listas = [{"nome": "zerado", "appids": {1}}]

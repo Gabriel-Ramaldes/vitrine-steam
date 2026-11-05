@@ -61,7 +61,7 @@ class Capas(Passo):
     def ao_sair(self):
         if self.trabalhando:
             if not messagebox.askokcancel(
-                    "Vitrine", "A varredura ainda esta rodando. Sair e parar?"):
+                    "Vitrine", "A varredura ainda está rodando. Sair e parar?"):
                 return False
             self.parar.set()
         return True
@@ -75,10 +75,10 @@ class Capas(Passo):
     def _monta(self):
         topo = ttk.Frame(self, padding=(16, 14, 16, 8))
         topo.pack(fill="x")
-        ttk.Label(topo, text="Capas problematicas",
+        ttk.Label(topo, text="Capas problemáticas",
                   style="Titulo.TLabel").pack(anchor="w")
-        ttk.Label(topo, style="Fraco.TLabel",
-                  text="Jogos sem capa propria, com capa fabricada pela Steam "
+        ttk.Label(topo, style="Fraco.TLabel", wraplength=820, justify="left",
+                  text="Jogos sem capa própria, com capa fabricada pela Steam "
                        "ou com arte fraca. Escolha uma alternativa; ela vai "
                        "pra capas/ e passa a valer sempre.").pack(anchor="w")
 
@@ -87,7 +87,7 @@ class Capas(Passo):
         ttk.Label(chave, text="Chave da SteamGridDB:").pack(side="left")
         self.var_chave = tk.StringVar()
         self.ent_chave = ttk.Entry(chave, textvariable=self.var_chave,
-                                   show="\u2022", width=40)
+                                   show="\u2022", width=26)
         self.ent_chave.pack(side="left", padx=8)
         self.var_ver = tk.BooleanVar(value=False)
         ttk.Checkbutton(chave, text="mostrar", variable=self.var_ver,
@@ -96,8 +96,10 @@ class Capas(Passo):
                    command=self.salvar_chave).pack(side="left", padx=8)
         ttk.Button(chave, text="Pegar a minha",
                    command=self.abrir_chave).pack(side="left")
-        self.lb_chave = ttk.Label(chave, style="Fraco.TLabel", text="")
-        self.lb_chave.pack(side="left", padx=10)
+        # numa linha so a fileira estourava a janela e comia o ultimo botao
+        self.lb_chave = ttk.Label(self, style="Fraco.TLabel", text="",
+                                  wraplength=820, justify="left")
+        self.lb_chave.pack(anchor="w", padx=16)
 
         barra = ttk.Frame(self, padding=(16, 4, 16, 8))
         barra.pack(fill="x")
@@ -153,7 +155,7 @@ class Capas(Passo):
                                   text="sem\ncapa", justify="center",
                                   width=16, anchor="center")
         self.lb_atual.pack()
-        ttk.Label(atual, text="como esta hoje", style="Cartao.Fraco.TLabel",
+        ttk.Label(atual, text="como está hoje", style="Cartao.Fraco.TLabel",
                   anchor="center").pack(fill="x")
 
         texto = ttk.Frame(cabeca, style="Painel.TFrame")
@@ -167,18 +169,21 @@ class Capas(Passo):
                                    justify="left", text="")
         self.lb_motivo.pack(anchor="w", pady=(2, 8))
 
+        # empilhados: a coluna que sobra ao lado da miniatura tem uns
+        # 290px, e dois botoes lado a lado nao cabem em largura nenhuma
+        # que de pra garantir. Em pe, cada um cabe sempre.
         acoes = ttk.Frame(texto, style="Painel.TFrame")
         acoes.pack(fill="x", pady=(0, 8))
         self.bt_sgdb = ttk.Button(acoes, text="Buscar na SteamGridDB",
                                   command=self.buscar, state="disabled")
-        self.bt_sgdb.pack(side="left")
-        self.bt_arquivo = ttk.Button(acoes, text="Usar arquivo meu...",
+        self.bt_sgdb.pack(anchor="w", pady=(0, 5))
+        self.bt_arquivo = ttk.Button(acoes, text="Usar um arquivo meu",
                                      command=self.escolher_arquivo,
                                      state="disabled")
-        self.bt_arquivo.pack(side="left", padx=8)
+        self.bt_arquivo.pack(anchor="w", pady=(0, 5))
         self.bt_site = ttk.Button(acoes, text="Abrir no site",
                                   command=self.abrir_site, state="disabled")
-        self.bt_site.pack(side="left")
+        self.bt_site.pack(anchor="w")
 
         ttk.Label(dir_, text="alternativas", style="Fraco.TLabel",
                   background=tema.PAINEL).pack(anchor="w", pady=(8, 2))
@@ -269,7 +274,7 @@ class Capas(Passo):
         for w in self.lista.winfo_children():
             w.destroy()
         self.itens = []
-        self.estado("lendo as colecoes...")
+        self.estado("lendo as coleções...")
 
         def trabalho():
             try:
@@ -368,7 +373,7 @@ class Capas(Passo):
         else:
             ttk.Label(self.cands, style="Alerta.TLabel", background=tema.PAINEL,
                       wraplength=480, justify="left",
-                      text="Sem chave da SteamGridDB nao da pra buscar artes. "
+                      text="Sem chave da SteamGridDB não da pra buscar artes. "
                            "Cole a chave la em cima, ou use 'Usar arquivo "
                            "meu...' com uma imagem sua."
                       ).pack(anchor="w", pady=8)
@@ -398,7 +403,7 @@ class Capas(Passo):
         if not self.selecionado or self.selecionado["appid"] != appid:
             return
         if not b64:
-            self.lb_atual.configure(image="", text="nao existe\ncapa hoje")
+            self.lb_atual.configure(image="", text="não existe\ncapa hoje")
             return
         img = tk.PhotoImage(data=b64)
         self.imagens[("atual", appid)] = img
@@ -481,7 +486,7 @@ class Capas(Passo):
             except Exception as e:
                 msg = str(e)
                 self.app.na_janela(lambda: self.estado(
-                    f"nao deu: {msg}", "Alerta.TLabel"))
+                    f"não deu: {msg}", "Alerta.TLabel"))
                 return
             self.app.na_janela(lambda: self._adotou(appid, destino))
 
