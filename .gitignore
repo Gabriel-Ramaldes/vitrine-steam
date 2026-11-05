@@ -1,5 +1,10 @@
 # ---------------------------------------------------------------
 #  O que NAO vai pro repositorio.
+#
+#  A regra: assets/ e o que o repositorio carrega e o programa le.
+#  Tudo que o programa GERA ou que e seu fica fora, mesmo quando tem
+#  uma pasta de mesmo nome dentro de assets/.
+#
 #  Arte de capa pertence as publicadoras: uso pessoal, nunca commit.
 # ---------------------------------------------------------------
 
@@ -23,20 +28,25 @@ originais/
 preview/
 estado.json
 
-# a logo da Steam e marca registrada da Valve: fica so na sua maquina
-molduras/logo.png
-molduras/icone_ribbon.png
-
-# os icones de badge vieram de fora e a licenca de cada um e desconhecida.
-# ficam na sua maquina; quem clonar o repo escolhe os proprios.
+# os seus badges. Os meus sao do Flaticon, cuja licenca gratuita nao
+# permite redistribuir; os de assets/badges/ sao Bootstrap Icons (MIT)
+# e esses sim vao pro repo.
 badges/*
 !badges/.gitkeep
+
+# molduras e adesivos que a etapa Aparencia desenha na sua maquina,
+# junto com a logo da Steam (marca da Valve, so local). O conjunto que
+# acompanha o projeto e assets/molduras/ e assets/adesivos/.
+molduras/
+adesivos/
 
 # build
 build_tmp/
 dist/
 *.exe
 *.spec
+*.rar
+*.zip
 __pycache__/
 *.py[cod]
 

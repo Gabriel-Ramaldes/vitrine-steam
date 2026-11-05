@@ -356,7 +356,7 @@ def gerar(destino="molduras"):
     ic = None
     for cand in (os.path.join(d, "icone_ribbon.png"),
                  os.path.join(raiz, "badges", "platinado.png"),
-                 os.path.join(raiz, "badges_padrao", "platinado.png")):
+                 os.path.join(raiz, "assets", "badges", "platinado.png")):
         if os.path.exists(cand):
             ic = cand
             break

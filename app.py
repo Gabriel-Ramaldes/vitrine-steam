@@ -66,6 +66,7 @@ class App(tk.Tk):
         self.title("Vitrine")
         self.geometry("1120x760")
         self.minsize(900, 620)
+        self._icone()
         tema.aplicar(self)
 
         self.fila = queue.Queue()
@@ -111,6 +112,32 @@ class App(tk.Tk):
         super().destroy()
 
     # ---- estrutura -------------------------------------------------------
+
+    def _icone(self):
+        """
+        O icone da janela e da barra de tarefas.
+
+        Falha calada de proposito: icone faltando, Tk antigo sem PNG ou
+        .ico corrompido nao sao motivo pra o programa nao abrir. O que se
+        perde e a figurinha.
+
+        No Windows o .ico e o certo - e o unico formato que a barra de
+        tarefas aceita, e ele guarda varios tamanhos. Fora dele, o PNG.
+        """
+        try:
+            if sys.platform.startswith("win"):
+                ico = core.achar_icone(".ico")
+                if ico:
+                    self.iconbitmap(default=str(ico))
+                    return
+            png = core.achar_icone(".png")
+            if png:
+                # a referencia precisa sobreviver: o Tk nao segura a
+                # imagem, e sem isto o coletor de lixo a leva embora
+                self._icone_img = tk.PhotoImage(file=str(png))
+                self.iconphoto(True, self._icone_img)
+        except Exception:
+            pass
 
     def _monta(self):
         corpo = ttk.Frame(self)

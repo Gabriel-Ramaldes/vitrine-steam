@@ -17,6 +17,11 @@ Coleção do Steam  ->  status  ->  camada na capa
 detectado sozinho  ->  family   ->  canto verde no alto à esquerda
 ```
 
+> **Primeira vez aqui?** Comece pelo
+> **[COMECE_AQUI.md](COMECE_AQUI.md)** — leva da pasta vazia até a
+> biblioteca emoldurada, sem desvios. Este README é a referência
+> completa, para depois.
+
 ## Por onde começar
 
 Dois cliques em **`Vitrine.bat`**. A aplicação conduz por sete etapas, e
@@ -83,7 +88,7 @@ badges/suficiente.png   badges/online.png
 badges/boardgame.png    badges/shovelware.png
 ```
 
-**O repositório já vem com um conjunto pronto** em `badges_padrao/`,
+**O repositório já vem com um conjunto pronto** em `assets/badges/`,
 montado a partir do [Bootstrap Icons](https://icons.getbootstrap.com/)
 (MIT). Clonou, funciona.
 
@@ -118,6 +123,18 @@ Rode de novo sempre que mexer nas cores ou nas medidas dentro desses
 scripts. `tools/build_stickers.py` lê os adesivos declarados no
 `config.json`, então mudar a cor de `FREE` lá e rodar o script é o
 caminho.
+
+### O ícone
+
+O ícone é `assets/icone/vitrine.png` e `.ico`. Para trocar por outro:
+
+```
+python tools/build_icone.py minha_arte.png
+```
+
+A imagem sai quadrada, sem o fundo das bordas, nos sete tamanhos que o
+Windows pede. Sem argumento, o script desenha um ícone de reserva por
+código — útil num fork, não acompanha o repositório.
 
 ## A etapa Coleções
 
@@ -486,14 +503,21 @@ tools/              geradores das molduras e dos adesivos, e as sondas
 testes/             as provas: nenhuma usa rede, quase nenhuma abre janela
 
 config.exemplo.json ponto de partida para o config.json
-badges/             seus PNG de status, se quiser trocar (fora do repo)
-badges_padrao/      o conjunto MIT que vem junto, usado quando badges/ nao tem
-molduras/           molduras geradas por codigo
-adesivos/           adesivos gerados por codigo
+assets/             o que o repositorio carrega e o programa le
+  badges/           conjunto padrao de status (Bootstrap Icons, MIT)
+  molduras/         caixa, fita, scrim, canto de Family, geometria.json
+  adesivos/         FREE e DEMO
+  icone/            o icone da janela e do exe
+  glifos/           os SVG do Bootstrap e a licenca deles
+
+badges/             os seus, se quiser trocar (vence assets/; fora do repo)
+molduras/           o que a etapa Aparencia desenha aqui (vence assets/)
+adesivos/           idem
 capas/              suas capas manuais, por appid
 originais/          backup das capas que substituimos
 estado.json         o que gravamos, para saber o que desfazer
 
+COMECE_AQUI.md      o caminho do zero ate a biblioteca emoldurada
 DESENVOLVIMENTO.md  as decisoes, as hipoteses que morreram e por que
 PLANO.md            o desenho da unificacao
 THIRD_PARTY.md      dependencias, o que nao vai no repo, e por que

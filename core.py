@@ -127,7 +127,15 @@ MANUAL_DIR_NAME = "capas"
 BADGES_DIR_NAME = "badges"
 # conjunto que vem no repositorio, usado quando badges/ nao tem o arquivo.
 # Os seus em badges/ sempre vencem - trocar um icone e so pôr o seu la.
-BADGES_PADRAO_DIR_NAME = "badges_padrao"
+# Tudo que o repositorio carrega e o programa le fica em assets/, numa
+# subpasta por tipo. Ao lado do programa, uma pasta de mesmo nome guarda a
+# SUA versao e vence - badges/ vence assets/badges/, molduras/ vence
+# assets/molduras/. Ver achar_arte().
+ASSETS_DIR_NAME = "assets"
+BADGES_DIR_NAME = "badges"
+ICONE_DIR_NAME = "icone"
+MOLDURAS_DIR_NAME = "molduras"
+ADESIVOS_DIR_NAME = "adesivos"
 
 
 # --------------------------------------------------------------------------
@@ -1812,8 +1820,9 @@ def listas_das_colecoes(steam_path, user_id, badges_dir, config):
         })
 
     if sem_badge:
-        _rel.aviso("[!] Badge faltando - nem em badges/ nem em "
-                   f"{BADGES_PADRAO_DIR_NAME}/. Estas colecoes ficaram de fora:")
+        _rel.aviso(f"[!] Badge faltando - nem em {BADGES_DIR_NAME}/ nem em "
+                   f"{ASSETS_DIR_NAME}/{BADGES_DIR_NAME}/. "
+                   "Estas colecoes ficaram de fora:")
         for nome, origens in sem_badge:
             _rel.info(f"      {badges_dir.name}/{nome}.png  <- {', '.join(origens)}")
         _rel.info("")
@@ -1868,24 +1877,80 @@ PADRAO_LISTA = {
 }
 
 
+def recurso(*partes):
+    """
+    Um arquivo que viaja dentro do executavel.
+
+    Congelado, o PyInstaller descompacta o que foi embutido numa pasta
+    temporaria (sys._MEIPASS) que some ao fechar - diferente de BASE_DIR,
+    que aponta pra pasta do .exe. Dados que o usuario edita ficam em
+    BASE_DIR; dados que so acompanham o programa ficam aqui.
+    """
+    base = getattr(sys, "_MEIPASS", None)
+    return Path(base).joinpath(*partes) if base else None
+
+
+def pastas_de(subpasta, propria=None):
+    """
+    Onde procurar um arquivo de arte, na ordem em que se procura.
+
+    1. a SUA pasta, ao lado do programa: badges/, molduras/, adesivos/
+    2. assets/<subpasta>/, o que vem no repositorio
+    3. assets/<subpasta>/ embutido no exe, pro executavel andar sozinho
+
+    O nome e o mesmo nos tres niveis de proposito: trocar uma peca e so
+    largar um arquivo de mesmo nome na pasta de cima, sem configurar nada
+    e sem o git acusar diferenca no que veio do repositorio.
+    """
+    pastas = [Path(propria) if propria is not None else BASE_DIR / subpasta,
+              BASE_DIR / ASSETS_DIR_NAME / subpasta]
+    embutido = recurso(ASSETS_DIR_NAME, subpasta)
+    if embutido is not None:
+        pastas.append(embutido)
+    vistas, saida = set(), []
+    for p in pastas:                      # sem repetir, se duas coincidirem
+        if p not in vistas:
+            vistas.add(p)
+            saida.append(p)
+    return saida
+
+
+def achar_arte(subpasta, nome, exts=(".png",), propria=None):
+    """O primeiro arquivo que existe, descendo a escada de pastas_de()."""
+    for pasta in pastas_de(subpasta, propria):
+        for ext in exts:
+            cand = pasta / f"{nome}{ext}"
+            if cand.exists():
+                return cand
+    return None
+
+
 def achar_badge(badges_dir, nome):
     """
     O PNG de um status: o seu primeiro, o do repositorio depois.
 
     Os icones que eu uso sao do Flaticon e a licenca deles nao permite
-    redistribuir, entao badges/ fica fora do repositorio. Sem este
-    fallback, quem clonasse nao conseguiria gerar capa nenhuma com
-    status.
+    redistribuir, entao badges/ fica fora do repositorio. Sem o conjunto
+    em assets/badges/, quem clonasse nao geraria capa nenhuma com status.
     """
-    pastas = [Path(badges_dir)]
-    padrao = BASE_DIR / BADGES_PADRAO_DIR_NAME
-    if padrao != pastas[0]:
-        pastas.append(padrao)
-    for pasta in pastas:
-        for ext in (".png", ".webp", ".gif"):
-            cand = pasta / f"{nome}{ext}"
-            if cand.exists():
-                return cand
+    return achar_arte(BADGES_DIR_NAME, nome,
+                      (".png", ".webp", ".gif"), propria=badges_dir)
+
+
+def achar_icone(ext=".png"):
+    """
+    O icone da aplicacao, pra janela e pro exe.
+
+    ext e ".png" (a janela do tkinter) ou ".ico" (o Windows, que nao
+    aceita outra coisa na barra de tarefas). `padrao` so e consultado se
+    alguem tiver gerado um com tools/build_icone.py.
+
+    Devolve None quando nao ha nenhum - e isso nao e erro.
+    """
+    for nome in ("vitrine", "padrao"):
+        achado = achar_arte(ICONE_DIR_NAME, nome, (ext,))
+        if achado is not None:
+            return achado
     return None
 
 
@@ -1930,19 +1995,40 @@ def resolver_badge(appid, listas):
 # Dentro de cada slot a hierarquia desempata, como sempre.
 # --------------------------------------------------------------------------
 
-MOLDURAS_DIR_NAME = "molduras"
 CAMADA_PADRAO = {"tipo": "badge"}
+
+# As pecas sem as quais a moldura nao fecha. A etapa Aparencia pergunta
+# por esta lista em vez de manter a sua.
+PECAS_MOLDURA = ("case.png", "case_ouro.png", "scrim.png",
+                 "ribbon.png", "family.png", "geometria.json")
 
 
 def molduras_dir():
+    """
+    A SUA pasta de molduras - onde o gerador grava.
+
+    Nao e necessariamente de onde a moldura e lida: se voce nunca gerou,
+    vale a que veio em assets/molduras/. Pra LER use peca_moldura().
+    """
     return BASE_DIR / MOLDURAS_DIR_NAME
+
+
+def peca_moldura(arquivo):
+    """O caminho de uma peca - 'case.png', 'geometria.json' - ou None."""
+    nome, _, ext = arquivo.rpartition(".")
+    return achar_arte(MOLDURAS_DIR_NAME, nome, ("." + ext,))
+
+
+def molduras_faltando():
+    """Quais pecas nao existem em nenhum degrau da escada."""
+    return [n for n in PECAS_MOLDURA if peca_moldura(n) is None]
 
 
 @functools.lru_cache(maxsize=1)
 def geometria_moldura():
     """Medidas publicadas pelo gerador; None se a moldura nao foi gerada."""
-    f = molduras_dir() / "geometria.json"
-    if not f.exists():
+    f = peca_moldura("geometria.json")
+    if f is None:
         return None
     try:
         return json.loads(f.read_text(encoding="utf-8"))
@@ -1952,21 +2038,18 @@ def geometria_moldura():
 
 @functools.lru_cache(maxsize=8)
 def _peca(nome):
-    """Carrega molduras/<nome>.png uma vez so."""
-    f = molduras_dir() / f"{nome}.png"
-    if not f.exists():
+    """Carrega a peca <nome>.png uma vez so."""
+    f = peca_moldura(f"{nome}.png")
+    if f is None:
         return None
     return Image.open(f).convert("RGBA")
 
 
-ADESIVOS_DIR_NAME = "adesivos"
-
-
 @functools.lru_cache(maxsize=16)
 def _adesivo(nome):
-    """Carrega adesivos/<nome>.png, gerado por tools/build_stickers.py."""
-    f = BASE_DIR / ADESIVOS_DIR_NAME / f"{nome}.png"
-    if not f.exists():
+    """Carrega o adesivo <nome>.png, gerado por tools/build_stickers.py."""
+    f = achar_arte(ADESIVOS_DIR_NAME, nome)
+    if f is None:
         return None
     return Image.open(f).convert("RGBA")
 

@@ -1,5 +1,5 @@
 """
-Gera o conjunto padrao de badges, em badges_padrao/.
+Gera o conjunto padrao de badges, em assets/badges/.
 
 Por que existe: os icones que eu uso no dia a dia sao do Flaticon, cuja
 licenca gratuita exige atribuicao e NAO permite redistribuir os arquivos.
@@ -7,13 +7,13 @@ Entao eles ficam so na minha maquina. Sem um conjunto proprio, quem
 clonasse o repositorio nao conseguiria gerar capa nenhuma com status.
 
 Este conjunto resolve isso: parte do Bootstrap Icons (MIT, redistribuicao
-permitida), que vive em tools/icones/ como SVG - a fonte de verdade - e
+permitida), que vive em assets/glifos/ como SVG - a fonte de verdade - e
 como PNG branco ja rasterizado, para o gerador nao precisar de nenhuma
 biblioteca de SVG.
 
-Os PNG saem em badges_padrao/, NAO em badges/. Assim quem quiser usar os
-proprios icones poe em badges/ e eles vencem, sem o git ficar acusando
-diferenca nos arquivos padrao.
+Os PNG saem em assets/badges/, NAO em badges/. Assim quem quiser usar
+os proprios icones poe em badges/ e eles vencem, sem o git ficar
+acusando diferenca no que veio do repositorio.
 
     python tools/build_badges.py
 """
@@ -47,7 +47,8 @@ CORES = {
 SO_GLIFO = ("family",)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-ICONES = os.path.join(AQUI, "icones")
+RAIZ = os.path.dirname(AQUI)
+ICONES = os.path.join(RAIZ, "assets", "glifos")
 
 
 def _glifo(nome, lado):
@@ -112,7 +113,7 @@ def badge(nome, cor=None, lado=LADO):
 
 def gerar(destino=None):
     """Escreve o conjunto inteiro e devolve os nomes gerados."""
-    destino = destino or os.path.join(os.path.dirname(AQUI), "badges_padrao")
+    destino = destino or os.path.join(RAIZ, "assets", "badges")
     os.makedirs(destino, exist_ok=True)
     feitos = []
     for nome, cor in CORES.items():

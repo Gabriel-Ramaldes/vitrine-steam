@@ -82,9 +82,9 @@ class Aparencia(Passo):
 
     def atualizar(self):
         d = core.molduras_dir()
-        faltando = [n for n in ("case.png", "case_ouro.png", "scrim.png",
-                                "ribbon.png", "family.png", "geometria.json")
-                    if not (d / n).exists()]
+        # quem responde e o core: a peca pode estar na sua pasta ou ter
+        # vindo em assets/molduras/, e as duas contam como pronta
+        faltando = core.molduras_faltando()
         if self.var_moldura.get():
             self.cx_moldura.pack(fill="x", pady=(6, 0))
             if faltando:
@@ -94,8 +94,12 @@ class Aparencia(Passo):
                          f"{'...' if len(faltando) > 3 else ''}",
                     style="Erro.TLabel")
             else:
+                proprias = (d / "case.png").exists()
                 self.lb_arquivos.configure(
-                    text=f"molduras prontas em {d.name}/", style="Ok.TLabel")
+                    text="molduras prontas em "
+                         + (f"{d.name}/" if proprias
+                            else f"{core.ASSETS_DIR_NAME}/{d.name}/"),
+                    style="Ok.TLabel")
         else:
             self.cx_moldura.pack_forget()
         self.desenhar_previa(faltando)
@@ -113,7 +117,6 @@ class Aparencia(Passo):
                       text="Gere as molduras para ver a previa."
                       ).pack(anchor="w")
             return
-        d = core.molduras_dir()
         faixa = ttk.Frame(self.previa, style="Painel.TFrame")
         faixa.pack(anchor="w")
         for nome, rotulo in (("case.png", "normal"),
@@ -121,7 +124,8 @@ class Aparencia(Passo):
                              ("family.png", "canto family")):
             try:
                 import galeria
-                b64 = galeria.miniatura((d / nome).read_bytes(), 96)
+                f = core.peca_moldura(nome)       # a que vale, nao a sua
+                b64 = galeria.miniatura(f.read_bytes(), 96)
                 img = tk.PhotoImage(data=b64)
             except Exception:
                 continue

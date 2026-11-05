@@ -1,0 +1,68 @@
+VITRINE
+Emoldura a sua biblioteca Steam e marca em que pe esta cada jogo.
+Sem fins lucrativos, feito por hobby.
+
+
+ANTES DE ABRIR
+--------------
+1. No Steam, crie Colecoes para os status que voce quer marcar
+   ("Zerados", "Platinados", "Pausados") e arraste os jogos pra dentro.
+   E dali que o status sai. Tem que ser colecao manual: as dinamicas,
+   que o Steam monta por filtro, nao servem.
+
+2. FECHE O STEAM. De verdade: o X manda pra bandeja do lado do relogio.
+   Saia pelo menu. Com ele aberto, as capas somem quando ele fechar.
+
+
+ABRIR
+-----
+Dois cliques em Vitrine.exe. Nao precisa instalar nada.
+
+Ele conduz por sete etapas e explica cada uma na hora. Em resumo:
+mapeie suas colecoes, simule, confira, aplique.
+
+A etapa APLICAR so destrava depois que voce simula. E de proposito.
+
+
+A PRIMEIRA VEZ DEMORA
+---------------------
+Ele baixa a capa original de cada jogo e guarda antes de trocar, com uma
+pausa curta entre os downloads pra nao martelar o servidor da Valve. Com
+uns 2.000 jogos, uns 15 minutos. Deixe rodando. Depois e rapido.
+
+
+DEU ERRADO?
+-----------
+"Desfazer tudo", na ultima etapa, devolve todas as capas originais.
+Nada aqui e irreversivel.
+
+As capas nao mudaram?  O Steam estava aberto. Feche, rode, abra de novo.
+"nenhuma colecao mapeada"?  Volte no passo 1 ali de cima.
+
+
+ONDE FICAM OS SEUS DADOS
+------------------------
+O exe cria estas pastas ao lado dele. Se mover o exe, leve junto:
+
+  originais\   as capas antigas, pra poder desfazer
+  capas\       capas que voce escolher a mao
+  preview\     o resultado da simulacao
+  molduras\    as molduras, desenhadas na etapa Aparencia
+  config.json  o seu mapa de colecoes
+  estado.json  o que foi aplicado
+
+
+CREDITOS
+--------
+Steam e Steam Family sao marcas da Valve Corporation. Obrigado a Valve
+pela logo e pelo proprio recurso de arte personalizada na biblioteca,
+que e o que permite isto existir.
+
+Os icones de status sao do Bootstrap Icons (licenca MIT, incluida).
+As capas alternativas vem da SteamGridDB e de quem envia arte pra la.
+
+A arte de capa dos jogos pertence as publicadoras e fica so na sua
+maquina.
+
+Codigo e documentacao completa:
+https://github.com/Gabriel-Ramaldes/vitrine
